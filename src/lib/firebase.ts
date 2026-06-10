@@ -1,18 +1,22 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { getDatabase, ref, set, push, onValue, update, remove, get } from 'firebase/database';
+import { getFirestore, doc, collection, setDoc, getDoc, onSnapshot, deleteDoc, getDocs, runTransaction } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
 // Initialize Firebase App
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 export const auth = getAuth(app);
+export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 
-// Build Realtime Database URL
-const dbUrl = `https://${firebaseConfig.projectId}-default-rtdb.firebaseio.com`;
-export const rtdb = getDatabase(app, dbUrl);
+const withTimeout = (promise: Promise<any>, timeoutMs: number = 3000) => {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeoutMs))
+  ]);
+};
 
-// Safe database operation wrappers that work with Firebase RTDB but have a local-first fallback
+// Safe database operation wrappers that work with Firestore but have a local-first fallback
 export class SmartDBService {
   private static useFallback = false;
   private static fallbackData: Record<string, any> = JSON.parse(localStorage.getItem('family_expenses_fallback_db') || '{}');
@@ -48,8 +52,23 @@ export class SmartDBService {
     }
 
     try {
-      const dbRef = ref(rtdb, path);
-      await set(dbRef, data);
+      const parts = path.split('/');
+      if (parts.length === 1) {
+        if (!data) { // Used for clearing collections
+          const snapshot = await withTimeout(getDocs(collection(db, path)));
+          // Using regular loops rather than batch for simplicity in wrapper
+          for (const d of snapshot.docs) {
+             await withTimeout(deleteDoc(d.ref));
+          }
+        }
+      } else {
+        const docRef = doc(db, parts[0], parts.slice(1).join('/'));
+        if (data === null || data === undefined) {
+          await withTimeout(deleteDoc(docRef));
+        } else {
+          await withTimeout(setDoc(docRef, data));
+        }
+      }
     } catch (err: any) {
       console.error(`Firebase Set error at index: ${path}`, err);
       // Fallback
@@ -69,7 +88,7 @@ export class SmartDBService {
   // Push data (add item to list)
   static async push(path: string, data: any): Promise<string> {
     if (this.useFallback) {
-      const newId = `id_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const newId = `id_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
       if (!this.fallbackData[path]) this.fallbackData[path] = {};
       const actualData = { ...data, id: newId };
       this.fallbackData[path][newId] = actualData;
@@ -79,16 +98,16 @@ export class SmartDBService {
     }
 
     try {
-      const dbRef = ref(rtdb, path);
-      const newRef = push(dbRef);
-      const key = newRef.key || `key_${Date.now()}`;
+      const collRef = collection(db, path);
+      const newRef = doc(collRef);
+      const key = newRef.id;
       const actualData = { ...data, id: key };
-      await set(newRef, actualData);
+      await withTimeout(setDoc(newRef, actualData));
       return key;
     } catch (err: any) {
       console.error(`Firebase Push error at indexing: ${path}`, err);
       this.enableFallbackMode(err.message || 'database-error');
-      const newId = `id_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const newId = `id_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
       if (!this.fallbackData[path]) this.fallbackData[path] = {};
       const actualData = { ...data, id: newId };
       this.fallbackData[path][newId] = actualData;
@@ -118,20 +137,54 @@ export class SmartDBService {
       };
     }
 
-    const dbRef = ref(rtdb, path);
-    const unsubscribe = onValue(dbRef, (snapshot) => {
-      callback(snapshot.val());
-    }, (err) => {
-      console.error(`Firebase onValue error on: ${path}`, err);
-      if (err.message?.includes('Permission denied') || err.message?.includes('PERMISSION_DENIED')) {
-        this.enableFallbackMode('Permission Denied');
-        callback(this.fallbackData[path] || null);
-      } else if (errorCallback) {
-        errorCallback(err);
-      }
-    });
-
-    return unsubscribe;
+    const parts = path.split('/');
+    if (parts.length === 1) {
+      const collRef = collection(db, path);
+      const unsubscribe = onSnapshot(collRef, (snapshot) => {
+        const obj: any = {};
+        snapshot.forEach(d => {
+          obj[d.id] = d.data();
+        });
+        callback(obj);
+      }, (err) => {
+        console.error(`Firebase onSnapshot error on collection: ${path}`, err);
+        if (err.message?.includes('Permission denied') || err.message?.includes('PERMISSION_DENIED') || err.message?.includes('offline') || err.message?.includes('operation') || err.message?.includes('unavailable')) {
+          this.enableFallbackMode(err.message);
+          callback(this.fallbackData[path] || null);
+          if (!this.listeners[path]) this.listeners[path] = [];
+          this.listeners[path].push(callback);
+        } else if (errorCallback) {
+          errorCallback(err);
+        }
+      });
+      return () => {
+        unsubscribe();
+        if (this.listeners[path]) {
+           this.listeners[path] = this.listeners[path].filter(cb => cb !== callback);
+        }
+      };
+    } else {
+      const docRef = doc(db, parts[0], parts.slice(1).join('/'));
+      const unsubscribe = onSnapshot(docRef, (snapshot) => {
+        callback(snapshot.exists() ? snapshot.data() : null);
+      }, (err) => {
+        console.error(`Firebase onSnapshot error on doc: ${path}`, err);
+        if (err.message?.includes('Permission denied') || err.message?.includes('PERMISSION_DENIED') || err.message?.includes('offline') || err.message?.includes('operation') || err.message?.includes('unavailable')) {
+          this.enableFallbackMode(err.message);
+          callback(this.fallbackData[path] || null);
+          if (!this.listeners[path]) this.listeners[path] = [];
+          this.listeners[path].push(callback);
+        } else if (errorCallback) {
+          errorCallback(err);
+        }
+      });
+      return () => {
+        unsubscribe();
+        if (this.listeners[path]) {
+           this.listeners[path] = this.listeners[path].filter(cb => cb !== callback);
+        }
+      };
+    }
   }
 
   // Delete node
@@ -150,8 +203,16 @@ export class SmartDBService {
     }
 
     try {
-      const dbRef = ref(rtdb, path);
-      await remove(dbRef);
+      const parts = path.split('/');
+      if (parts.length === 1) {
+        const snapshot = await withTimeout(getDocs(collection(db, path)));
+        for (const d of snapshot.docs) {
+           await withTimeout(deleteDoc(d.ref));
+        }
+      } else {
+        const docRef = doc(db, parts[0], parts.slice(1).join('/'));
+        await withTimeout(deleteDoc(docRef));
+      }
     } catch (err: any) {
       console.error(`Firebase Remove error at: ${path}`, err);
       this.enableFallbackMode(err.message || 'database-error');
@@ -180,9 +241,19 @@ export class SmartDBService {
     }
 
     try {
-      const dbRef = ref(rtdb, path);
-      const snapshot = await get(dbRef);
-      return snapshot.val();
+      const parts = path.split('/');
+      if (parts.length === 1) {
+        const snapshot = await withTimeout(getDocs(collection(db, path)));
+        const obj: any = {};
+        snapshot.forEach((d: any) => {
+          obj[d.id] = d.data();
+        });
+        return obj;
+      } else {
+        const docRef = doc(db, parts[0], parts.slice(1).join('/'));
+        const snapshot = await withTimeout(getDoc(docRef));
+        return snapshot.exists() ? snapshot.data() : null;
+      }
     } catch (err: any) {
       console.error(`Firebase Get error on: ${path}`, err);
       this.enableFallbackMode(err.message || 'database-error');
@@ -196,3 +267,4 @@ export class SmartDBService {
     }
   }
 }
+

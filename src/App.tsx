@@ -18,6 +18,7 @@ import { PermissionsScreen } from './components/PermissionsScreen';
 import { Loader2 } from 'lucide-react';
 
 const CombinedAppContent: React.FC = () => {
+  // App Content Force Save
   const { currentScreen, loading } = useAppState();
 
   if (loading) {

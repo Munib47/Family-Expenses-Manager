@@ -113,7 +113,8 @@ body {
 
 /* Inputs and Forms fields */
 #phone_view_container input,
-#phone_view_container select {
+#phone_view_container select,
+#phone_view_container textarea {
   background-color: rgba(255, 255, 255, 0.08) !important;
   border-color: rgba(255, 255, 255, 0.15) !important;
   color: #ffffff !important;

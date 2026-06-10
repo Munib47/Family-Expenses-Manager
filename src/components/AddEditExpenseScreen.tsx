@@ -132,7 +132,6 @@ export const AddEditExpenseScreen: React.FC = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50 font-medium"
-              required
             />
           </div>
         </div>
@@ -150,7 +149,6 @@ export const AddEditExpenseScreen: React.FC = () => {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50 font-bold"
-              required
             />
           </div>
         </div>
@@ -166,7 +164,6 @@ export const AddEditExpenseScreen: React.FC = () => {
               value={date}
               onChange={(e) => setDate(e.target.value)}
               className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50 font-medium text-gray-600"
-              required
             />
           </div>
         </div>
@@ -186,9 +183,9 @@ export const AddEditExpenseScreen: React.FC = () => {
 
         <button 
           id="expense_save_btn"
-          type="submit"
-          className="w-full py-3.5 text-white font-semibold text-sm rounded-xl tracking-wide shadow-md transition-all active:scale-[0.98] mt-4"
-          style={{ backgroundColor: customBtnColor }}
+          type="button"
+          onClick={handleSave}
+          className="w-full py-3.5 bg-black text-white font-semibold text-sm rounded-xl tracking-wide shadow-md transition-all active:scale-[0.98] mt-4 z-10 relative"
         >
           {isEdit ? 'Update Expense' : 'Save Expense'}
         </button>
