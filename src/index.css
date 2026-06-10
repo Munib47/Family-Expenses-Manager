@@ -83,7 +83,6 @@ body {
 #phone_view_container .text-gray-900,
 #phone_view_container .text-gray-800,
 #phone_view_container .text-gray-750,
-#phone_view_container .text-slate-800,
 #phone_view_container .text-indigo-950,
 #phone_view_container .text-indigo-900 {
   color: rgba(255, 255, 255, 0.98) !important;
@@ -99,7 +98,6 @@ body {
 
 #phone_view_container .text-gray-500,
 #phone_view_container .text-slate-500,
-#phone_view_container .text-slate-400,
 #phone_view_container .text-indigo-500 {
   color: rgba(255, 255, 255, 0.55) !important;
 }
