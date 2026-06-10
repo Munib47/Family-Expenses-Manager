@@ -87,7 +87,10 @@ const defaultPermissions: UserPermissions = {
 const StateContext = createContext<StateContextType | undefined>(undefined);
 
 export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
+    const saved = sessionStorage.getItem('currentUser');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [wantToBuyItems, setWantToBuyItems] = useState<WantToBuyItem[]>([]);
@@ -131,6 +134,14 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       sessionStorage.removeItem('activeFlow');
     }
   }, [activeFlow]);
+
+  useEffect(() => {
+    if (currentUser) {
+      sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+    } else {
+      sessionStorage.removeItem('currentUser');
+    }
+  }, [currentUser]);
 
   // Sync mode based on service fallback
   useEffect(() => {
@@ -196,6 +207,12 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           });
         }
       } else {
+        const savedUser = sessionStorage.getItem('currentUser');
+        if (savedUser) {
+          setCurrentUser(JSON.parse(savedUser));
+          setLoading(false);
+          return;
+        }
         setCurrentUser(null);
         setNavigationHistory([{ screen: 'login', params: {} }]);
       }

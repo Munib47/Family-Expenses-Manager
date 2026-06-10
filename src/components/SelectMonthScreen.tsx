@@ -43,7 +43,7 @@ export const SelectMonthScreen: React.FC = () => {
           <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
           Go Back
         </button>
-        <span className="text-[10px] uppercase tracking-widest font-bold text-gray-400 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
+        <span className="text-xs uppercase tracking-widest font-extrabold text-blue-700 bg-blue-50 px-4 py-1.5 rounded-full border-2 border-blue-200 shadow-sm">
           Step 2: Period List
         </span>
       </div>
@@ -68,11 +68,11 @@ export const SelectMonthScreen: React.FC = () => {
               }`}
             >
               <div className="flex items-center gap-4">
-                <span className={isSelected ? 'text-teal-600 font-extrabold' : 'text-slate-800'}>
+                <span className={isSelected ? 'text-teal-600 font-extrabold' : 'text-slate-900 font-extrabold text-base'}>
                   {m.label}
                 </span>
               </div>
-              <Calendar className={`w-5 h-5 ${isSelected ? 'text-teal-500' : 'text-slate-400'}`} />
+              <Calendar className={`w-5 h-5 ${isSelected ? 'text-teal-500' : 'text-slate-800 stroke-[2.5]'}`} />
             </button>
           );
         })}
