@@ -87,7 +87,7 @@ export const ExpenseListScreen: React.FC = () => {
           <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
           Go Back
         </button>
-        <span className="text-xs font-bold text-gray-950 bg-slate-50 px-3.5 py-1.5 rounded-full border border-slate-200 shadow-sm">
+        <span className="text-xs font-bold text-black-800 bg-slate-50 px-3.5 py-1.5 rounded-full border border-slate-200 shadow-sm">
           📅 {readableMonth}
         </span>
         {/* Quick notification bell for Owner (Step 8 Indicator) */}
