@@ -12,7 +12,8 @@ import {
   ChevronRight, 
   Wallet,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  Calendar
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -87,8 +88,9 @@ export const ExpenseListScreen: React.FC = () => {
           <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
           Go Back
         </button>
-        <span className="text-xs font-bold text-gray-950 bg-slate-50 px-3.5 py-1.5 rounded-full border border-slate-200 shadow-sm">
-          📅 {readableMonth}
+        <span className="flex items-center gap-1.5 text-sm font-extrabold text-teal-700 bg-teal-50 px-4 py-1.5 rounded-full border-2 border-teal-200 shadow-md">
+          <Calendar className="w-4 h-4 stroke-[2.5]" />
+          {readableMonth}
         </span>
         {/* Quick notification bell for Owner (Step 8 Indicator) */}
         {isOwner && (
@@ -158,7 +160,7 @@ export const ExpenseListScreen: React.FC = () => {
       {hasTotalSpendingAccess ? (
         <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4 shadow-xs relative overflow-hidden">
           <div className="absolute top-0 right-0 w-24 h-24 bg-green-500/5 rounded-full -mr-6 -mt-6" />
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
+          <span className="text-xs font-extrabold text-black uppercase tracking-wider block">
             {isOwner ? 'Group Expenditure' : 'Your Managed Budget'}
           </span>
           <div className="flex justify-between items-end mt-2">
@@ -166,8 +168,8 @@ export const ExpenseListScreen: React.FC = () => {
               <span className="text-2xl font-bold text-slate-900 tracking-tight">
                 {formatCurrency(totalAmount)}
               </span>
-              <span className="text-xs text-slate-500 block mt-0.5">
-                Total Expenses • <strong>{totalCount} Items</strong>
+              <span className="text-sm text-slate-700 font-medium block mt-1">
+                Total Expenses • <strong className="text-slate-900">{totalCount} Items</strong>
               </span>
             </div>
             
@@ -207,30 +209,29 @@ export const ExpenseListScreen: React.FC = () => {
       ) : (
         // For standard non-privileged user who can't see total spending
         <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
+          <span className="text-xs font-extrabold text-black uppercase tracking-wider block">
             Your Personal Ledger
           </span>
           <div className="mt-1.5">
             <span className="text-2xl font-bold text-slate-900">
               {formatCurrency(totalAmount)}
             </span>
-            <span className="text-xs text-slate-500 block mt-0.5">
-              Own Expenses • <strong>{totalCount} Items</strong>
+            <span className="text-sm text-slate-700 font-medium block mt-1">
+              Own Expenses • <strong className="text-slate-900">{totalCount} Items</strong>
             </span>
           </div>
         </div>
       )}
 
       {/* Action buttons (Add Expense) */}
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="font-bold text-gray-900 text-sm tracking-wide">Expense List</h3>
+      <div className="flex justify-between items-center mb-4 mt-2">
+        <h3 className="font-extrabold text-gray-900 text-lg tracking-tight">Expense List</h3>
         <button 
           id="add_expense_btn"
           onClick={() => navigate('add-expense')}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-white font-semibold text-xs rounded-xl transition shadow-xs active:scale-[0.97]"
-          style={{ backgroundColor: customBtnColor }}
+          className="flex items-center gap-2 px-5 py-2.5 bg-black text-white font-bold text-sm rounded-xl transition shadow-md hover:shadow-lg active:scale-[0.97]"
         >
-          <Plus className="w-3.5 h-3.5" />
+          <Plus className="w-5 h-5 stroke-[2.5]" />
           Add Expense
         </button>
       </div>
