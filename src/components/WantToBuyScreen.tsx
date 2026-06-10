@@ -83,7 +83,7 @@ export const WantToBuyScreen: React.FC = () => {
         </div>
 
         {/* Small Progress Donut / Indicator */}
-        <div className="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-105">
+        <div className="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
           {displayItems.length > 0 
             ? `${((completedCount / displayItems.length) * 100).toFixed(0)}% Done` 
             : 'Empty'}

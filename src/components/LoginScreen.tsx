@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useAppState } from '../context/StateContext';
-import { Mail, Lock, AlertCircle, Sparkles } from 'lucide-react';
+import { Mail, Lock, AlertCircle, Sparkles, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const LoginScreen: React.FC = () => {
   const { login, navigate, loading, customization, currentUser } = useAppState();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -82,14 +83,22 @@ export const LoginScreen: React.FC = () => {
           </div>
           <div className="relative">
             <input 
-              type="password" 
+              type={showPassword ? 'text' : 'password'} 
               placeholder="Password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 pl-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50"
+              className="w-full px-4 py-3 pl-10 pr-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50"
               required
             />
             <Lock className="absolute left-3 top-3.5 text-gray-400 w-4.5 h-4.5" />
+            <button 
+              type="button" 
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600 transition"
+              title={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+            </button>
           </div>
         </div>
 

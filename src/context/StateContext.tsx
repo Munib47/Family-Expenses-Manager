@@ -99,16 +99,38 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [firebaseMode, setFirebaseMode] = useState<'firebase' | 'local'>('firebase');
   
   // Navigation stack
-  const [navigationHistory, setNavigationHistory] = useState<Array<{ screen: string; params: any }>>([
-    { screen: 'login', params: {} }
-  ]);
+  const [navigationHistory, setNavigationHistory] = useState<Array<{ screen: string; params: any }>>(() => {
+    const saved = sessionStorage.getItem('navigationHistory');
+    return saved ? JSON.parse(saved) : [{ screen: 'login', params: {} }];
+  });
   const currentScreenState = navigationHistory[navigationHistory.length - 1] || { screen: 'login', params: {} };
   const currentScreen = currentScreenState.screen;
   const currentScreenParams = currentScreenState.params;
 
   // Selected state
-  const [activeMonth, setActiveMonth] = useState<string>('2026-06'); // June 2026 as default from flow
-  const [activeFlow, setActiveFlow] = useState<'expense' | 'buy' | null>(null);
+  const [activeMonth, setActiveMonth] = useState<string>(() => {
+    return sessionStorage.getItem('activeMonth') || '2026-06'; // June 2026 as default from flow
+  });
+  const [activeFlow, setActiveFlow] = useState<'expense' | 'buy' | null>(() => {
+    const saved = sessionStorage.getItem('activeFlow');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem('navigationHistory', JSON.stringify(navigationHistory));
+  }, [navigationHistory]);
+
+  useEffect(() => {
+    sessionStorage.setItem('activeMonth', activeMonth);
+  }, [activeMonth]);
+
+  useEffect(() => {
+    if (activeFlow) {
+      sessionStorage.setItem('activeFlow', JSON.stringify(activeFlow));
+    } else {
+      sessionStorage.removeItem('activeFlow');
+    }
+  }, [activeFlow]);
 
   // Sync mode based on service fallback
   useEffect(() => {
@@ -127,7 +149,13 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           const profile = await SmartDBService.get(`users/${firebaseUser.uid}`);
           if (profile) {
             setCurrentUser(profile);
-            navigate('choose-option');
+            setNavigationHistory(prev => {
+              const lastScreen = prev[prev.length - 1]?.screen;
+              if (lastScreen === 'login' || lastScreen === 'register') {
+                return [...prev, { screen: 'choose-option', params: {} }];
+              }
+              return prev;
+            });
           } else {
             // First time login user profile creation
             // Check if is first user in system -> make them owner
@@ -142,7 +170,13 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             };
             await SmartDBService.set(`users/${firebaseUser.uid}`, newProfile);
             setCurrentUser(newProfile);
-            navigate('choose-option');
+            setNavigationHistory(prev => {
+              const lastScreen = prev[prev.length - 1]?.screen;
+              if (lastScreen === 'login' || lastScreen === 'register') {
+                return [...prev, { screen: 'choose-option', params: {} }];
+              }
+              return prev;
+            });
           }
         } catch (err) {
           // Setup local fallback user profiles directly
@@ -153,7 +187,13 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             role: 'owner'
           };
           setCurrentUser(localProfile);
-          navigate('choose-option');
+          setNavigationHistory(prev => {
+            const lastScreen = prev[prev.length - 1]?.screen;
+            if (lastScreen === 'login' || lastScreen === 'register') {
+              return [...prev, { screen: 'choose-option', params: {} }];
+            }
+            return prev;
+          });
         }
       } else {
         setCurrentUser(null);
@@ -185,7 +225,10 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // 2. Sync Expenses
     const unsubExpenses = SmartDBService.onValue('expenses', (data) => {
       if (data) {
-        const eList: Expense[] = Object.values(data);
+        const eList: Expense[] = Object.keys(data).map(key => ({
+          ...data[key],
+          id: data[key].id || key
+        }));
         setExpenses(eList);
       } else {
         setExpenses([]);
@@ -195,7 +238,10 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // 3. Sync Want to Buy Items
     const unsubBuy = SmartDBService.onValue('wantToBuy', (data) => {
       if (data) {
-        const bList: WantToBuyItem[] = Object.values(data);
+        const bList: WantToBuyItem[] = Object.keys(data).map(key => ({
+          ...data[key],
+          id: data[key].id || key
+        }));
         setWantToBuyItems(bList);
       } else {
         setWantToBuyItems([]);

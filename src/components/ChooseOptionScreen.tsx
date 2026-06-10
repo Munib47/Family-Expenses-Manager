@@ -33,10 +33,11 @@ export const ChooseOptionScreen: React.FC = () => {
         </div>
         <button 
           onClick={logout}
-          className="p-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 font-bold transition shadow-sm text-xs"
           title="Sign Out"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="w-4 h-4 stroke-[2.5]" />
+          Logout
         </button>
       </div>
 

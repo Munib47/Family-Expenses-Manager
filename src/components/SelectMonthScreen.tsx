@@ -68,12 +68,11 @@ export const SelectMonthScreen: React.FC = () => {
               }`}
             >
               <div className="flex items-center gap-4">
-                {/* No circular radio dot - just highlight the list button item text and background cleanly */}
-                <span className={isSelected ? 'text-teal-600 font-extrabold' : 'text-black-800'}>
+                <span className={isSelected ? 'text-teal-600 font-extrabold' : 'text-slate-800'}>
                   {m.label}
                 </span>
               </div>
-              <Calendar className={`w-5 h-5 ${isSelected ? 'text-teal-500' : 'text-black-400'}`} />
+              <Calendar className={`w-5 h-5 ${isSelected ? 'text-teal-500' : 'text-slate-400'}`} />
             </button>
           );
         })}

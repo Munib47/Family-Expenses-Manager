@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAppState } from '../context/StateContext';
-import { User, Mail, Lock, AlertCircle, ArrowLeft } from 'lucide-react';
+import { User, Mail, Lock, AlertCircle, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const RegisterScreen: React.FC = () => {
@@ -9,6 +9,8 @@ export const RegisterScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,14 +109,21 @@ export const RegisterScreen: React.FC = () => {
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Password</label>
           <div className="relative">
             <input 
-              type="password" 
+              type={showPassword ? 'text' : 'password'} 
               placeholder="Password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2.5 pl-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50"
+              className="w-full px-4 py-2.5 pl-10 pr-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50"
               required
             />
             <Lock className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
+            <button 
+              type="button" 
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition p-0.5"
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
         </div>
 
@@ -122,14 +131,21 @@ export const RegisterScreen: React.FC = () => {
           <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Confirm Password</label>
           <div className="relative">
             <input 
-              type="password" 
+              type={showConfirmPassword ? 'text' : 'password'} 
               placeholder="Confirm Password" 
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2.5 pl-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50"
+              className="w-full px-4 py-2.5 pl-10 pr-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50"
               required
             />
             <Lock className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
+            <button 
+              type="button" 
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition p-0.5"
+            >
+              {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
         </div>
 
