@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Base Body Styles */
+body {
+  margin: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* overflow: hidden; */
+  font-family: var(--font-sans);
+  background-color: #0f172a !important;
+  background-image: linear-gradient(to bottom right, #312e81, #0f172a, #115e59) !important;
+}
+
+/* Ensure child views in the smartphone frame match glassmorphism aesthetics */
+#phone_view_container {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(40px) !important;
+  -webkit-backdrop-filter: blur(40px) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Override screen contents so they are fully translucent/transparent */
+#phone_view_container div.bg-white,
+#phone_view_container .bg-white {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+/* Translucent input & choice item panels */
+#phone_view_container .bg-gray-50,
+#phone_view_container .bg-gray-100,
+#phone_view_container .bg-gray-150,
+#phone_view_container .bg-slate-50,
+#phone_view_container .bg-slate-100,
+#phone_view_container .bg-indigo-50/25,
+#phone_view_container .bg-indigo-50,
+#phone_view_container .bg-green-50,
+#phone_view_container .bg-green-50\/50,
+#phone_view_container .bg-teal-500\/20,
+#phone_view_container .bg-slate-100\/80,
+#phone_view_container .bg-[#f8fafc],
+#phone_view_container .bg-[#fafafa],
+#phone_view_container .bg-[#fffbeb] {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* Status Bar & Header transparent backdrop */
+#phone_view_container .bg-slate-950,
+#phone_view_container .bg-slate-900,
+#phone_view_container header {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Typography styles inside viewport to support Ice White colors of Frosted glass theme */
+#phone_view_container h1,
+#phone_view_container h2,
+#phone_view_container h3,
+#phone_view_container h4,
+#phone_view_container label,
+#phone_view_container span,
+#phone_view_container p {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+#phone_view_container .text-gray-950,
+#phone_view_container .text-gray-900,
+#phone_view_container .text-gray-800,
+#phone_view_container .text-gray-750,
+#phone_view_container .text-slate-800,
+#phone_view_container .text-indigo-950,
+#phone_view_container .text-indigo-900 {
+  color: rgba(255, 255, 255, 0.98) !important;
+}
+
+#phone_view_container .text-gray-700,
+#phone_view_container .text-gray-650,
+#phone_view_container .text-gray-600,
+#phone_view_container .text-slate-600,
+#phone_view_container .text-indigo-700 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+#phone_view_container .text-gray-500,
+#phone_view_container .text-gray-400,
+#phone_view_container .text-slate-500,
+#phone_view_container .text-slate-400,
+#phone_view_container .text-indigo-500 {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+#phone_view_container .hover\:bg-gray-50:hover,
+#phone_view_container .hover\:bg-gray-100:hover,
+#phone_view_container .hover\:bg-slate-50:hover {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Inputs and Forms fields */
+#phone_view_container input,
+#phone_view_container select {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+#phone_view_container input::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+#phone_view_container select option {
+  background-color: #1e1b4b !important;
+  color: #ffffff !important;
+}
+
+/* Accent Colors - Soft Teal from Glass design instead of hard values */
+#phone_view_container .text-green-500,
+#phone_view_container .text-emerald-500,
+#phone_view_container .text-green-600,
+#phone_view_container .text-indigo-650,
+#phone_view_container .text-indigo-600,
+#phone_view_container .text-blue-600 {
+  color: #2dd4bf !important; /* Premium Teal */
+}
+
+#phone_view_container .bg-green-500,
+#phone_view_container .bg-emerald-500,
+#phone_view_container .bg-green-600,
+#phone_view_container .bg-indigo-600,
+#phone_view_container .bg-indigo-700,
+#phone_view_container .bg-blue-600 {
+  background-color: #0d9488 !important; /* Soft Teal background */
+  color: #ffffff !important;
+}
+
+#phone_view_container .bg-green-50,
+#phone_view_container .bg-green-50\/50,
+#phone_view_container .bg-teal-500\/20,
+#phone_view_container .bg-emerald-50,
+#phone_view_container .bg-indigo-50,
+#phone_view_container .bg-blue-50 {
+  background-color: rgba(45, 212, 191, 0.1) !important;
+  border-color: rgba(45, 212, 191, 0.18) !important;
+}
+
+#phone_view_container .border-green-100,
+#phone_view_container .border-indigo-150,
+#phone_view_container .border-indigo-100,
+#phone_view_container .border-blue-100,
+#phone_view_container .border-gray-150,
+#phone_view_container .border-gray-200 {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Modifies default custom buttons style to have nice frosted focus border */
+#phone_view_container button {
+  transition: all 0.2s ease-in-out;
+}
+
+#phone_view_container button:active {
+  transform: scale(0.97);
+}
+
+/* Custom indicator or notice boxes */
+#phone_view_container .bg-green-50\/50,
+#phone_view_container .text-green-800 {
+  background-color: rgba(45, 212, 191, 0.08) !important;
+  color: #2dd4bf !important;
+}

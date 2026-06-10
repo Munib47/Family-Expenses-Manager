@@ -1,0 +1,6 @@
+{
+  "name": "Family Expense Manager",
+  "description": "A beautiful mobile-first family expense management and wishlist application synchronized via Firebase Realtime Database.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
