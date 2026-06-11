@@ -1,0 +1,4798 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.env.example
+.gitignore
+firebase-applet-config.json
+firebase-blueprint.json
+firebase.json
+firestore.rules
+index.html
+metadata.json
+package.json
+README.md
+src/App.tsx
+src/components/AddEditBuyItemScreen.tsx
+src/components/AddEditExpenseScreen.tsx
+src/components/BudgetScreen.tsx
+src/components/ChooseOptionScreen.tsx
+src/components/CustomizationScreen.tsx
+src/components/ExpenseListScreen.tsx
+src/components/GiveMoneyScreen.tsx
+src/components/LoadingSpinner.tsx
+src/components/LoginScreen.tsx
+src/components/ManageUsersScreen.tsx
+src/components/MobileFrame.tsx
+src/components/NotificationsScreen.tsx
+src/components/PermissionsScreen.tsx
+src/components/RegisterScreen.tsx
+src/components/SelectMonthScreen.tsx
+src/components/SettingsScreen.tsx
+src/components/WantToBuyScreen.tsx
+src/context/StateContext.tsx
+src/index.css
+src/lib/firebase.ts
+src/main.tsx
+src/types.ts
+tsconfig.json
+vite.config.ts
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="src/components/LoadingSpinner.tsx">
+import React from 'react';
+import { motion } from 'motion/react';
+
+export const LoadingSpinner: React.FC<{ text?: string }> = ({ text = "Loading..." }) => (
+  <div className="flex-1 flex flex-col items-center justify-center bg-white p-6 h-full">
+    <motion.div 
+      animate={{ rotate: 360 }}
+      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+      className="w-12 h-12 rounded-full border-[6px] border-transparent border-t-indigo-500 border-r-teal-500 border-b-green-500"
+    />
+    <span className="text-sm text-slate-600 font-semibold mt-4">{text}</span>
+  </div>
+);
+</file>
+
+<file path=".gitignore">
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+</file>
+
+<file path="firebase-applet-config.json">
+{
+  "projectId": "knitted-stratum-82r54",
+  "appId": "1:55759718605:web:b5995541e5475122554184",
+  "apiKey": "AIzaSyCNb770XOvVJ-R5vYso94QuaMeIgM1xsPk",
+  "authDomain": "knitted-stratum-82r54.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-0521cb13-fbf9-482b-af91-512988e82fc3",
+  "storageBucket": "knitted-stratum-82r54.firebasestorage.app",
+  "messagingSenderId": "55759718605",
+  "measurementId": ""
+}
+</file>
+
+<file path="firebase-blueprint.json">
+{
+  "entities": {
+    "user": {
+      "title": "User",
+      "description": "User profile",
+      "type": "object",
+      "properties": {}
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "user",
+      "description": "Users"
+    }
+  }
+}
+</file>
+
+<file path="firebase.json">
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}
+</file>
+
+<file path="firestore.rules">
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+</file>
+
+<file path="index.html">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Google AI Studio App</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+</file>
+
+<file path="metadata.json">
+{
+  "name": "Family Expense Manager",
+  "description": "A beautiful mobile-first family expense management and wishlist application synchronized via Firebase Realtime Database.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+</file>
+
+<file path="package.json">
+{
+  "name": "react-example",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port=3000 --host=0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist server.js",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@google/genai": "^2.4.0",
+    "@tailwindcss/vite": "^4.1.14",
+    "@vitejs/plugin-react": "^5.0.4",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "firebase": "^12.14.0",
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "vite": "^6.2.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.14.0",
+    "autoprefixer": "^10.4.21",
+    "esbuild": "^0.25.0",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.21.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.3"
+  }
+}
+</file>
+
+<file path="src/components/AddEditBuyItemScreen.tsx">
+import React, { useState, useEffect } from 'react';
+import { useAppState } from '../context/StateContext';
+import { ArrowLeft, Save, ShoppingBag, Plus, Minus, AlertCircle } from 'lucide-react';
+import { motion } from 'motion/react';
+
+export const AddEditBuyItemScreen: React.FC = () => {
+  const { 
+    addWantToBuyItem, 
+    editWantToBuyItem, 
+    wantToBuyItems, 
+    goBack, 
+    currentScreenParams, 
+    activeMonth,
+    customization,
+    currentUser
+  } = useAppState();
+
+  const editId = currentScreenParams?.editId;
+  const isEdit = !!editId;
+
+  const [name, setName] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isEdit) {
+      const existing = wantToBuyItems.find(i => i.id === editId);
+      if (existing) {
+        setName(existing.name);
+        setQuantity(existing.quantity);
+      }
+    }
+  }, [isEdit, editId, wantToBuyItems]);
+
+  const handleIncrement = () => setQuantity(prev => prev + 1);
+  const handleDecrement = () => setQuantity(prev => Math.max(1, prev - 1));
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!name.trim()) {
+      setError('Item Name must be provided.');
+      return;
+    }
+
+    try {
+      if (isEdit) {
+        await editWantToBuyItem(editId, { name, quantity });
+      } else {
+        await addWantToBuyItem({ name, quantity });
+      }
+      goBack();
+    } catch (err: any) {
+      setError(err.message || 'Error saving checkout item.');
+    }
+  };
+
+  const isOwner = currentUser?.role === 'owner';
+  const customBtnColor = isOwner ? customization.btnColor : '#000000';
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.99 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col justify-between p-6 bg-white"
+    >
+      {/* Header with Cancel and top Save indicator */}
+      <div className="flex items-center justify-between mt-2 mb-6">
+        <button 
+          onClick={goBack} 
+          className="py-2.5 px-5 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide hover:bg-slate-850 active:scale-95 transition flex items-center shadow-lg hover:shadow-xl"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+          Go Back
+        </button>
+        <h3 className="font-bold text-gray-950 text-sm">
+          {isEdit ? 'Edit Item' : 'Add Item'}
+        </h3>
+        <button 
+          onClick={handleSave}
+          className="text-xs font-bold text-blue-600 hover:text-blue-800 transition flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-lg border border-blue-100"
+        >
+          <Save className="w-3.5 h-3.5" />
+          Save
+        </button>
+      </div>
+
+      <form onSubmit={handleSave} className="flex-1 space-y-6 max-w-[360px] mx-auto w-full flex flex-col justify-center">
+        {error && (
+          <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Item Name Field */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            Item Name
+          </label>
+          <div className="relative">
+            <input 
+              type="text"
+              placeholder="Enter item name..."
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-gray-50 font-medium"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Quantity Increments Option (Step #10 Design Detail) */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            Quantity
+          </label>
+          <div className="flex items-center justify-center gap-4 bg-gray-50 border border-gray-150 p-4 rounded-xl">
+            <button 
+              type="button"
+              onClick={handleDecrement}
+              className="w-10 h-10 rounded-full bg-white border border-gray-250 shadow-xs flex items-center justify-center text-gray-700 hover:bg-gray-100 transition font-bold"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+            <span className="text-xl font-extrabold text-gray-900 min-w-[36px] text-center">
+              {quantity}
+            </span>
+            <button 
+              type="button"
+              onClick={handleIncrement}
+              className="w-10 h-10 rounded-full bg-white border border-gray-250 shadow-xs flex items-center justify-center text-gray-700 hover:bg-gray-100 transition font-bold"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        <button 
+          id="item_save_btn"
+          type="submit"
+          className="w-full py-3.5 text-white font-semibold text-sm rounded-xl tracking-wide shadow-md transition-all active:scale-[0.98] mt-4"
+          style={{ backgroundColor: customBtnColor }}
+        >
+          Save Item
+        </button>
+      </form>
+
+      <div className="mt-4 text-center text-[10px] text-gray-400 font-medium">
+        Active List Period: <strong className="text-gray-600">{activeMonth}</strong>
+      </div>
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/components/BudgetScreen.tsx">
+import React, { useState } from 'react';
+import { useAppState } from '../context/StateContext';
+import { ArrowLeft, Save, Wallet, AlertCircle } from 'lucide-react';
+import { motion } from 'motion/react';
+
+export const BudgetScreen: React.FC = () => {
+  const { setMonthlyBudget, activeMonth, budgets, goBack, customization, currentUser } = useAppState();
+
+  const [selectedMonth, setSelectedMonth] = useState(activeMonth);
+  
+  // Find currently configured budget if any
+  const existingBudget = budgets.find(b => b.month === selectedMonth)?.amount || '';
+  const [budgetAmount, setBudgetAmount] = useState(existingBudget.toString());
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  // Sync amount field on month change
+  const handleMonthChange = (val: string) => {
+    setSelectedMonth(val);
+    const mBudget = budgets.find(b => b.month === val)?.amount || '';
+    setBudgetAmount(mBudget.toString());
+    setSuccess(null);
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    const amtNum = parseFloat(budgetAmount);
+    if (isNaN(amtNum) || amtNum <= 0) {
+      setError('Budget Amount must be a valid positive number.');
+      return;
+    }
+
+    try {
+      await setMonthlyBudget(selectedMonth, amtNum);
+      setSuccess('Monthly budget limit updated successfully!');
+      setTimeout(() => {
+        goBack();
+      }, 1200);
+    } catch (err: any) {
+      setError(err.message || 'Error configuring budget.');
+    }
+  };
+
+  const isOwner = currentUser?.role === 'owner';
+  const accentColor = isOwner ? customization.primaryColor : '#22c55e';
+  const customBtnColor = isOwner ? customization.btnColor : '#000000';
+
+  const months = [
+    { value: '2026-04', label: 'April 2026' },
+    { value: '2026-05', label: 'May 2026' },
+    { value: '2026-06', label: 'June 2026' },
+    { value: '2026-07', label: 'July 2026' },
+    { value: '2026-08', label: 'August 2026' },
+  ];
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.99 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col justify-between p-6 bg-white"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mt-2 mb-6">
+        <button 
+          onClick={goBack} 
+          className="p-1 px-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition flex items-center font-semibold text-xs"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          Cancel
+        </button>
+        <h3 className="font-bold text-gray-900 text-sm">
+          Set Monthly Budget
+        </h3>
+        <button 
+          onClick={handleSave}
+          className="text-xs font-bold text-green-600 hover:text-green-800 transition flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg border border-green-100"
+        >
+          <Save className="w-3.5 h-3.5" />
+          Save
+        </button>
+      </div>
+
+      <form onSubmit={handleSave} className="flex-1 space-y-5 max-w-[360px] mx-auto w-full flex flex-col justify-center">
+        <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mx-auto text-green-500 mb-2 border border-green-100">
+          <Wallet className="w-7 h-7" />
+        </div>
+
+        {error && (
+          <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {success && (
+          <div className="p-3 rounded-xl bg-green-50 border border-green-200 text-green-700 text-xs font-bold text-center">
+            {success}
+          </div>
+        )}
+
+        {/* Selected Month Dropdown */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            Month
+          </label>
+          <select
+            value={selectedMonth}
+            onChange={(e) => handleMonthChange(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50 font-semibold text-gray-800"
+          >
+            {months.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Budget Amount Input */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            Budget Amount
+          </label>
+          <div className="relative">
+            <input 
+              type="number"
+              placeholder="e.g. 25000"
+              value={budgetAmount}
+              onChange={(e) => setBudgetAmount(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50 font-bold"
+              required
+            />
+          </div>
+        </div>
+
+        <button 
+          id="budget_save_btn"
+          type="submit"
+          className="w-full py-3.5 text-white font-semibold text-sm rounded-xl tracking-wide shadow-md transition-all active:scale-[0.98] mt-4"
+          style={{ backgroundColor: customBtnColor }}
+        >
+          Save
+        </button>
+      </form>
+
+      {/* Role notice bottom (Step #11: "This budget is visible only to you and authorized users") */}
+      <div className="mt-4 p-3 rounded-xl bg-green-50/50 border border-green-100 text-[10px] text-green-800 leading-relaxed font-semibold text-center">
+        🛡️ This budget is visible only to you and authorized users.
+      </div>
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/components/CustomizationScreen.tsx">
+import React, { useState } from 'react';
+import { useAppState } from '../context/StateContext';
+import { ArrowLeft, Save, Coins, Layers, User, Settings2, Palette } from 'lucide-react';
+import { motion } from 'motion/react';
+
+export const CustomizationScreen: React.FC = () => {
+  const { customization, updateCustomization, goBack, currentUser, users } = useAppState();
+
+  const [bgColor, setBgColor] = useState(customization.bgColor || '#ffffff');
+  const [textColor, setTextColor] = useState(customization.textColor || '#000000');
+  const [primaryColor, setPrimaryColor] = useState(customization.primaryColor || '#22c55e');
+  const [btnColor, setBtnColor] = useState(customization.btnColor || '#0052CC');
+  const [chkColor, setChkColor] = useState(customization.chkColor || '#22c55e');
+  const [delBtnColor, setDelBtnColor] = useState(customization.delBtnColor || '#ef4444');
+
+  // Currency states
+  const [currency, setCurrency] = useState(customization.currency || 'PKR');
+  const [currencyScope, setCurrencyScope] = useState<'global' | 'specific'>(customization.currencyScope || 'global');
+  const [userCurrencies, setUserCurrencies] = useState<Record<string, string>>(customization.userCurrencies || {});
+
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaved(false);
+    
+    await updateCustomization({
+      bgColor,
+      textColor,
+      primaryColor,
+      btnColor,
+      chkColor,
+      delBtnColor,
+      currency,
+      currencyScope,
+      userCurrencies
+    });
+
+    setSaved(true);
+    setTimeout(() => {
+      setSaved(false);
+      goBack();
+    }, 1200);
+  };
+
+  const currencyOptions = ['PKR', 'USD', 'EUR', 'GBP', 'AED', 'SAR', 'INR'];
+
+  const bgOptions = ['#ffffff', '#f8fafc', '#fffbeb', '#f0fdf4', '#fafafa', '#0f172a'];
+  const textOptions = ['#000000', '#1e293b', '#0369a1', '#166534', '#475569'];
+  const primaryOptions = ['#22c55e', '#0ea5e9', '#6366f1', '#e11d48', '#8b5cf6'];
+  const btnOptions = ['#000005', '#1e1b4b', '#0f172a', '#1e3a8a', '#15803d'];
+  const chkOptions = ['#22c55e', '#06b6d4', '#eab308', '#ec4899', '#3b82f6'];
+  const delOptions = ['#ef4444', '#dc2626', '#b91c1c', '#000000', '#d97706'];
+
+  const isOwner = currentUser?.role === 'owner';
+
+  const handleUserCurrencyChange = (uid: string, currencySymbol: string) => {
+    setUserCurrencies(prev => ({
+      ...prev,
+      [uid]: currencySymbol
+    }));
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col justify-between p-6 bg-white overflow-y-auto rounded-2xl"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mt-2 mb-6 border-b border-gray-100 pb-4">
+        <button 
+          onClick={goBack} 
+          className="py-2 px-5 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide hover:bg-slate-850 active:scale-95 transition flex items-center shadow-md"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+          Go Back
+        </button>
+        <h3 className="font-extrabold text-slate-900 text-sm tracking-tight flex items-center gap-1.5">
+          <Settings2 className="w-4 h-4 text-emerald-500" />
+          Settings & Customization
+        </h3>
+        <button 
+          onClick={handleSave}
+          className="text-xs font-bold text-emerald-600 hover:text-emerald-800 transition flex items-center gap-1 bg-emerald-50 px-3.5 py-2 rounded-xl border border-emerald-100"
+        >
+          <Save className="w-3.5 h-3.5" />
+          Save
+        </button>
+      </div>
+
+      {saved && (
+        <div className="mb-5 p-3 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-extrabold text-center border border-emerald-150 animate-bounce">
+          ✓ Currency settings & colors applied successfully!
+        </div>
+      )}
+
+      <form onSubmit={handleSave} className="flex-1 space-y-6 max-w-[440px] mx-auto w-full pb-6">
+        {/* SECTION 1: CURRENCY SETTINGS (Default PKR, Owner Only) */}
+        <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4.5 space-y-4">
+          <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-1.5">
+            <Coins className="w-4 h-4 text-emerald-500" />
+            Currency Control Panel
+          </h4>
+
+          {/* Primary default currency select */}
+          <div>
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-2">
+              Default System Currency
+            </label>
+            <select
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/10 cursor-pointer"
+            >
+              {currencyOptions.map((curr) => (
+                <option key={curr} value={curr}>
+                  {curr} (Family Standard)
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Toggle choice: Whole app (global) or Specific user */}
+          <div>
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-2">
+              Currency Calculation Scope
+            </label>
+            <div className="grid grid-cols-2 gap-2 bg-slate-200/50 p-1 rounded-xl">
+              <button
+                type="button"
+                onClick={() => setCurrencyScope('global')}
+                className={`py-2 text-xs font-extrabold rounded-lg transition-all ${
+                  currencyScope === 'global'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Global (Whole App)
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrencyScope('specific')}
+                className={`py-2 text-xs font-extrabold rounded-lg transition-all ${
+                  currencyScope === 'specific'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Specific (User-by-User)
+              </button>
+            </div>
+            <p className="text-[10px] text-gray-400 mt-2 font-medium">
+              {currencyScope === 'global'
+                ? 'All household active balances will be formatted in PKR (or chosen system currency).'
+                : 'Define independent localized currencies for individual family participants.'}
+            </p>
+          </div>
+
+          {/* If Specific User list selected, let owner select symbol per user */}
+          {currencyScope === 'specific' && (
+            <div className="border-t border-slate-200 pt-3.5 space-y-3 animate-fade-in">
+              <span className="block text-[11px] font-bold text-slate-500 uppercase tracking-wide">
+                Assign Member Currencies
+              </span>
+              {users.length === 0 ? (
+                <p className="text-[10px] text-gray-400 italic">No family members registered yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {users.map((member) => (
+                    <div key={member.uid} className="flex items-center justify-between bg-white border border-slate-100 rounded-xl p-2.5">
+                      <div className="flex items-center gap-2">
+                        <User className="w-3.5 h-3.5 text-slate-400" />
+                        <span className="text-xs font-bold text-slate-700">{member.fullName}</span>
+                      </div>
+                      <select
+                        value={userCurrencies[member.uid] || currency}
+                        onChange={(e) => handleUserCurrencyChange(member.uid, e.target.value)}
+                        className="px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 focus:outline-none"
+                      >
+                        {currencyOptions.map((curr) => (
+                          <option key={curr} value={curr}>{curr}</option>
+                        ))}
+                      </select>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* SECTION 2: THEME ACENTS & VISUAL ACCENTS */}
+        <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4.5 space-y-4">
+          <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-2">
+            <Palette className="w-4 h-4 text-emerald-500" />
+            Theme Color Settings
+          </h4>
+
+          {/* Background Color circles */}
+          <div>
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
+              Dashboard Background
+              <span className="w-3.5 h-3.5 rounded-full border border-gray-300 shadow-xs" style={{ backgroundColor: bgColor }} />
+            </label>
+            <div className="flex items-center gap-2 flex-wrap">
+              {bgOptions.map(color => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setBgColor(color)}
+                  className={`w-7 h-7 rounded-full border transition-all active:scale-90 flex items-center justify-center cursor-pointer ${
+                    bgColor === color ? 'ring-2 ring-emerald-500 ring-offset-2 border-transparent scale-105' : 'border-gray-200 hover:border-gray-400'
+                  }`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Text Color circles */}
+          <div>
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
+              Text Typography
+              <span className="text-[10px] lowercase font-semibold" style={{ color: textColor }}>(Abc)</span>
+            </label>
+            <div className="flex items-center gap-2 flex-wrap">
+              {textOptions.map(color => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setTextColor(color)}
+                  className={`w-7 h-7 rounded-full border transition-all active:scale-90 flex items-center justify-center cursor-pointer ${
+                    textColor === color ? 'ring-2 ring-emerald-500 ring-offset-2 border-transparent scale-105' : 'border-gray-200 hover:border-gray-400'
+                  }`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Primary Accent Color circles */}
+          <div>
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+              Highlights & Pacing Progress Bar
+            </label>
+            <div className="flex items-center gap-2 flex-wrap">
+              {primaryOptions.map(color => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setPrimaryColor(color)}
+                  className={`w-7 h-7 rounded-full border transition-all active:scale-90 cursor-pointer ${
+                    primaryColor === color ? 'ring-2 ring-emerald-500 ring-offset-2 scale-105' : 'border-gray-200'
+                  }`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Button Background circles */}
+          <div>
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+              Action Button Accents
+            </label>
+            <div className="flex items-center gap-2 flex-wrap">
+              {btnOptions.map(color => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setBtnColor(color)}
+                  className={`w-7 h-7 rounded-full border transition-all active:scale-90 cursor-pointer ${
+                    btnColor === color ? 'ring-2 ring-emerald-500 ring-offset-2 scale-105' : 'border-gray-200'
+                  }`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Checkbox Icon circles */}
+          <div>
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+              Wishlist Checkbox Check State
+            </label>
+            <div className="flex items-center gap-2 flex-wrap">
+              {chkOptions.map(color => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setChkColor(color)}
+                  className={`w-7 h-7 rounded-full border transition-all active:scale-90 cursor-pointer ${
+                    chkColor === color ? 'ring-2 ring-emerald-500 ring-offset-2 scale-105' : 'border-gray-200'
+                  }`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Delete button Color circles */}
+          <div>
+            <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+              Danger Button / Delete Accent
+            </label>
+            <div className="flex items-center gap-2 flex-wrap">
+              {delOptions.map(color => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setDelBtnColor(color)}
+                  className={`w-7 h-7 rounded-full border transition-all active:scale-90 cursor-pointer ${
+                    delBtnColor === color ? 'ring-2 ring-emerald-500 ring-offset-2 scale-105' : 'border-gray-200'
+                  }`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <button 
+          id="customization_save_btn"
+          type="submit"
+          className="w-full py-3.5 text-white font-extrabold text-sm rounded-xl tracking-wide shadow-lg hover:shadow-xl transition-all active:scale-[0.98] mt-4 cursor-pointer"
+          style={{ backgroundColor: btnColor }}
+        >
+          Save Layout & Currencies
+        </button>
+      </form>
+
+      {/* Changes apply only to owner's view */}
+      <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200 text-[10px] text-slate-500 font-bold text-center leading-relaxed">
+        💡 Changes apply dynamically to participants. Customize colors to elevate your personal frosted glass layout styles.
+      </div>
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/components/PermissionsScreen.tsx">
+import React, { useState, useEffect } from 'react';
+import { useAppState } from '../context/StateContext';
+import { 
+  ArrowLeft, 
+  Save, 
+  CheckCircle2, 
+  ShieldCheck, 
+  ToggleLeft, 
+  ToggleRight,
+  Sparkles,
+  HelpCircle
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+
+export const PermissionsScreen: React.FC = () => {
+  const { 
+    users, 
+    updateUserPermissions, 
+    goBack, 
+    currentScreenParams, 
+    customization,
+    currentUser,
+    addNotification
+  } = useAppState();
+
+  const userId = currentScreenParams?.userId;
+  const targetUser = users.find(u => u.uid === userId);
+
+  // Success screen state (Step #19)
+  const [successMode, setSuccessMode] = useState(false);
+
+  // States for permissions toggles
+  const [addBudget, setAddBudget] = useState(false);
+  const [seeTotalSpending, setSeeTotalSpending] = useState(false);
+  const [addGiveMoney, setAddGiveMoney] = useState(false);
+  const [viewAllTransactions, setViewAllTransactions] = useState(false);
+  const [manageWantToBuy, setManageWantToBuy] = useState(false);
+  const [appCustomization, setAppCustomization] = useState(false);
+  const [manageUsers, setManageUsers] = useState(false);
+  const [viewNotifications, setViewNotifications] = useState(false);
+
+  useEffect(() => {
+    if (targetUser && targetUser.permissions) {
+      setAddBudget(targetUser.permissions.addBudget);
+      setSeeTotalSpending(targetUser.permissions.seeTotalSpending);
+      setAddGiveMoney(targetUser.permissions.addGiveMoney);
+      setViewAllTransactions(targetUser.permissions.viewAllTransactions);
+      setManageWantToBuy(targetUser.permissions.manageWantToBuy);
+      setAppCustomization(targetUser.permissions.appCustomization);
+      setManageUsers(targetUser.permissions.manageUsers);
+      setViewNotifications(targetUser.permissions.viewNotifications);
+    }
+  }, [targetUser]);
+
+  const handleSave = async () => {
+    if (!targetUser) return;
+
+    const newPerms = {
+      addBudget,
+      seeTotalSpending,
+      addGiveMoney,
+      viewAllTransactions,
+      manageWantToBuy,
+      appCustomization,
+      manageUsers,
+      viewNotifications,
+    };
+
+    await updateUserPermissions(targetUser.uid, newPerms);
+    await addNotification('Permissions Updated', `Access details updated successfully for ${targetUser.fullName}`);
+    setSuccessMode(true);
+  };
+
+  const handleDone = () => {
+    setSuccessMode(false);
+    goBack();
+  };
+
+  const isOwner = currentUser?.role === 'owner';
+  const customPrimary = isOwner ? customization.primaryColor : '#22c55e';
+  const customBtnColor = isOwner ? customization.btnColor : '#000000';
+
+  if (!targetUser) {
+    return (
+      <div className="flex-1 flex flex-col justify-center items-center p-6 bg-white text-center">
+        <HelpCircle className="w-12 h-12 text-gray-300" />
+        <h4 className="font-bold text-gray-800 text-sm mt-3">User not found</h4>
+        <button onClick={goBack} className="mt-4 px-4 py-2 text-xs bg-gray-100 rounded-xl">Back</button>
+      </div>
+    );
+  }
+
+  // Visual toggle switch helper component
+  const FormToggle = ({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) => (
+    <button
+      type="button"
+      onClick={() => onChange(!value)}
+      className="flex items-center justify-between w-full p-2.5 hover:bg-gray-50/70 rounded-xl transition text-left"
+    >
+      <span className="text-xs font-bold text-gray-700">{label}</span>
+      <div>
+        {value ? (
+          <ToggleRight className="w-10 h-10 transition-colors" style={{ color: customPrimary }} />
+        ) : (
+          <ToggleLeft className="w-10 h-10 text-gray-300 transition-colors" />
+        )}
+      </div>
+    </button>
+  );
+
+  return (
+    <AnimatePresence mode="wait">
+      {/* STEP 19: SUCCESS SCREEN */}
+      {successMode ? (
+        <motion.div 
+          key="success_screen"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          className="flex-1 flex flex-col justify-between p-6 bg-white"
+        >
+          {/* Back button hidden on success screen */}
+          <div className="h-4" />
+
+          {/* Success center content */}
+          <div className="text-center my-auto space-y-4">
+            <div className="relative inline-block">
+              <motion.div 
+                initial={{ rotate: -15, scale: 0.8 }}
+                animate={{ rotate: 0, scale: 1 }}
+                className="w-20 h-20 bg-green-50 border-2 border-green-100 rounded-full flex items-center justify-center text-green-500 mx-auto"
+              >
+                <CheckCircle2 className="w-12 h-12" style={{ color: customPrimary }} />
+              </motion.div>
+              <div className="absolute top-0 right-0 w-4 h-4 bg-amber-400 rounded-full animate-ping" />
+            </div>
+
+            <div className="space-y-1.5 max-w-sm mx-auto">
+              <h2 className="text-xl font-bold text-gray-900">Permissions Updated</h2>
+              <p className="text-xs text-gray-500 font-medium">
+                Access updated successfully for <strong className="text-gray-900 font-bold">{targetUser.fullName}</strong>.
+              </p>
+            </div>
+          </div>
+
+          {/* Done Button */}
+          <div className="mb-4">
+            <button 
+              id="permissions_done_btn"
+              onClick={handleDone}
+              className="w-full py-3.5 text-white font-semibold text-sm rounded-xl tracking-wide shadow-md transition-all active:scale-[0.98]"
+              style={{ backgroundColor: customBtnColor }}
+            >
+              Done
+            </button>
+          </div>
+        </motion.div>
+      ) : (
+        /* STEP 18: ACCESS & PERMISSIONS CONFIGURATION */
+        <motion.div 
+          key="permissions_form"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0 }}
+          className="flex-1 flex flex-col justify-between p-5 bg-white overflow-y-auto"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between mt-2 mb-4">
+            <button 
+              onClick={goBack} 
+              className="p-1 px-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition flex items-center font-semibold text-xs"
+            >
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Cancel
+            </button>
+            <h3 className="font-bold text-gray-900 text-sm">
+              Access & Permissions
+            </h3>
+            <button 
+              onClick={handleSave}
+              className="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition flex items-center gap-1 bg-indigo-50 px-2 py-1 rounded-lg border border-indigo-100"
+            >
+              <Save className="w-3.5 h-3.5" />
+              Save
+            </button>
+          </div>
+
+          <div className="space-y-4 max-w-[360px] mx-auto w-full flex-1">
+            <div className="border border-indigo-50 bg-indigo-50/25 p-4 rounded-2xl flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-black">
+                {targetUser.fullName.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900 text-xs">Grant Access for {targetUser.fullName}</h4>
+                <p className="text-[10px] text-gray-500 mt-0.5">Enable the modules this user can access (just like owner)</p>
+              </div>
+            </div>
+
+            {/* Checkboxes Toggle Blocks */}
+            <div className="space-y-1 bg-gray-50/50 border border-gray-100 p-2.5 rounded-2xl max-h-[380px] overflow-y-auto">
+              <FormToggle label="Add Budget" value={addBudget} onChange={setAddBudget} />
+              <FormToggle label="See Total Spending" value={seeTotalSpending} onChange={setSeeTotalSpending} />
+              <FormToggle label="Add / Give Money" value={addGiveMoney} onChange={setAddGiveMoney} />
+              <FormToggle label="View All Transactions" value={viewAllTransactions} onChange={setViewAllTransactions} />
+              <FormToggle label="Manage Want to Buy Items" value={manageWantToBuy} onChange={setManageWantToBuy} />
+              <FormToggle label="App Customization" value={appCustomization} onChange={setAppCustomization} />
+              <FormToggle label="Manage Users & Access" value={manageUsers} onChange={setManageUsers} />
+              <FormToggle label="View Notifications" value={viewNotifications} onChange={setViewNotifications} />
+            </div>
+
+            <button 
+              id="permissions_save_btn"
+              onClick={handleSave}
+              className="w-full py-3 text-white font-semibold text-sm rounded-xl tracking-wide shadow-md transition-all active:scale-[0.98] mt-3"
+              style={{ backgroundColor: customBtnColor }}
+            >
+              Save Access
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+</file>
+
+<file path="src/main.tsx">
+import {StrictMode} from 'react';
+import {createRoot} from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);
+</file>
+
+<file path="tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "module": "ESNext",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  }
+}
+</file>
+
+<file path="vite.config.ts">
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import {defineConfig} from 'vite';
+
+export default defineConfig(() => {
+  return {
+    plugins: [react(), tailwindcss()],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, '.'),
+      },
+    },
+    server: {
+      // HMR is disabled in AI Studio via DISABLE_HMR env var.
+      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
+      hmr: process.env.DISABLE_HMR !== 'true',
+      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
+      watch: process.env.DISABLE_HMR === 'true' ? null : {},
+    },
+  };
+});
+</file>
+
+<file path=".env.example">
+# GEMINI_API_KEY: Required for Gemini AI API calls.
+# AI Studio automatically injects this at runtime from user secrets.
+# Users configure this via the Secrets panel in the AI Studio UI.
+GEMINI_API_KEY="MY_GEMINI_API_KEY"
+
+# APP_URL: The URL where this applet is hosted.
+# AI Studio automatically injects this at runtime with the Cloud Run service URL.
+# Used for self-referential links, OAuth callbacks, and API endpoints.
+APP_URL="MY_APP_URL"
+
+# Firebase Client Configuration (Optional overrides)
+# Used when deploying externally (e.g. Vercel) to point to custom Firebase projects
+VITE_FIREBASE_API_KEY=""
+VITE_FIREBASE_AUTH_DOMAIN=""
+VITE_FIREBASE_PROJECT_ID=""
+VITE_FIREBASE_STORAGE_BUCKET=""
+VITE_FIREBASE_MESSAGING_SENDER_ID=""
+VITE_FIREBASE_APP_ID=""
+VITE_FIREBASE_DATABASE_ID=""
+</file>
+
+<file path="README.md">
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
+
+# Run and deploy your AI Studio app
+
+This contains everything you need to run your app locally.
+
+View your app in AI Studio: https://ai.studio/apps/0521cb13-fbf9-482b-af91-512988e82fc3
+
+## Run Locally
+
+**Prerequisites:**  Node.js
+
+
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
+</file>
+
+<file path="src/components/GiveMoneyScreen.tsx">
+import React, { useState } from 'react';
+import { useAppState } from '../context/StateContext';
+import { ArrowLeft, Save, Sparkles, User, AlertCircle, TrendingUp, HandCoins, BookOpen, ClipboardList } from 'lucide-react';
+import { motion } from 'motion/react';
+
+export const GiveMoneyScreen: React.FC = () => {
+  const { 
+    addGiveMoneyTransaction, 
+    giveMoneyTransactions, 
+    users, 
+    goBack, 
+    customization,
+    currentUser,
+    budgets,
+    getCurrencySymbol
+  } = useAppState();
+
+  const [selectedUser, setSelectedUser] = useState('');
+  const [amount, setAmount] = useState('');
+  const [purpose, setPurpose] = useState('');
+  const [date, setDate] = useState(() => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  });
+
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  // Filter out ourselves (or just display all family-members)
+  const availableUsers = users.filter(u => u.role !== 'owner');
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    if (!selectedUser || !amount || !purpose) {
+      setError('Please fill in all fields (Select User, Amount, Purpose).');
+      return;
+    }
+
+    const amtNum = parseFloat(amount);
+    if (isNaN(amtNum) || amtNum <= 0) {
+      setError('Amount must be a valid positive number.');
+      return;
+    }
+
+    try {
+      await addGiveMoneyTransaction(selectedUser, amtNum, purpose, date);
+      setSuccess('Transaction logged successfully!');
+      
+      // Reset form
+      setSelectedUser('');
+      setAmount('');
+      setPurpose('');
+    } catch (err: any) {
+      setError(err.message || 'Error logging give money transaction.');
+    }
+  };
+
+  const isOwner = currentUser?.role === 'owner';
+  const customPrimary = isOwner ? customization.primaryColor : '#22c55e';
+  const customBtnColor = isOwner ? customization.btnColor : '#000000';
+
+  // Format historical ledger items: Given Money transactions combined with Budget Set log items 
+  // (to match screen 13: "Given to Ali", "Given to Sara", "Budget Set: ₹25,000.00")
+  const ledgerItems: Array<{
+    id: string;
+    type: 'spend' | 'budget';
+    title: string;
+    subtitle: string;
+    details: string;
+    amount: number;
+    date: string;
+  }> = [];
+
+  // Add give money records
+  giveMoneyTransactions.forEach(tx => {
+    ledgerItems.push({
+      id: tx.id,
+      type: 'spend',
+      title: `Given to ${tx.userName}`,
+      subtitle: tx.purpose,
+      details: `Help for ${tx.purpose.toLowerCase()}`,
+      amount: tx.amount,
+      date: tx.date
+    });
+  });
+
+  // Add Budget Set records
+  budgets.forEach(b => {
+    ledgerItems.push({
+      id: `b_${b.month}`,
+      type: 'budget',
+      title: 'Budget Set',
+      subtitle: `${b.month === '2026-06' ? 'June 2026' : b.month}`,
+      details: b.month === '2026-06' ? 'June 2026' : b.month,
+      amount: b.amount,
+      date: `${b.month}-01`
+    });
+  });
+
+  // Sort by date descending
+  const sortedLedger = ledgerItems.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col p-5 bg-white overflow-y-auto"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mt-2 mb-6">
+        <button 
+          onClick={goBack} 
+          className="py-2.5 px-5 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide hover:bg-slate-800 active:scale-95 transition flex items-center shadow-lg hover:shadow-xl"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+          Go Back
+        </button>
+        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full shadow-sm border border-emerald-400">
+          <BookOpen className="w-4 h-4 text-white" />
+          <span className="text-xs font-bold text-white tracking-wide">
+            Give Money Ledger
+          </span>
+        </div>
+      </div>
+
+      {/* Part 1: Hand / Give Money Form */}
+      <div className="border border-gray-100 rounded-2xl p-5 bg-white shadow-md mb-6 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
+        <h3 className="font-extrabold text-gray-900 text-lg mb-4 flex items-center gap-2">
+          <HandCoins className="w-6 h-6 text-green-500" />
+          Add / Give Money
+        </h3>
+
+        {error && (
+          <div className="p-2.5 rounded-xl bg-red-50 border border-red-250 text-red-650 text-xs flex items-center gap-2 mb-3">
+            <AlertCircle className="w-4 h-4" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {success && (
+          <div className="p-2.5 rounded-xl bg-green-50 border border-green-250 text-green-750 text-xs font-bold text-center mb-3">
+            {success}
+          </div>
+        )}
+
+        <form onSubmit={handleSave} className="space-y-3.5">
+          {/* Select User dropdown */}
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Select User</label>
+            <select
+              value={selectedUser}
+              onChange={(e) => setSelectedUser(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-180 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-green-500/20 bg-gray-50/70 text-gray-800 font-semibold"
+              required
+            >
+              <option value="">-- Choose Member --</option>
+              {availableUsers.map(u => (
+                <option key={u.uid} value={u.uid}>{u.fullName}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            {/* Amount */}
+            <div>
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Amount (PKR)</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">PKR</span>
+                <input 
+                  type="number"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-gray-50/50 font-bold text-gray-900 transition"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Date */}
+            <div>
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Date</label>
+              <input 
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-gray-50/50 font-semibold text-gray-800 transition"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Purpose details */}
+          <div className="pt-1">
+            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Purpose / Details</label>
+            <input 
+              type="text"
+              placeholder="e.g. Help for groceries, transport"
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-gray-50/50 font-semibold text-gray-800 transition"
+              required
+            />
+          </div>
+
+          <div className="pt-2">
+            <button 
+              id="give_money_submit"
+              type="submit"
+              className="w-full py-3.5 bg-black text-white font-extrabold text-sm rounded-xl tracking-wide shadow-md hover:shadow-lg transition active:scale-[0.98] uppercase flex justify-center items-center gap-2"
+            >
+              <Save className="w-5 h-5" />
+              Save Transaction
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Part 2: All Transactions / Given Money */}
+      <div className="rounded-2xl p-5 bg-black/80 backdrop-blur-md border border-gray-800 shadow-xl mt-2">
+        <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-700">
+          <h3 className="font-extrabold text-white text-base flex items-center gap-2">
+            <ClipboardList className="w-5 h-5 text-indigo-400" />
+            All Transactions
+          </h3>
+          <span className="text-xs font-bold text-indigo-200 bg-indigo-900/50 border border-indigo-700/50 px-3 py-1 rounded-full select-none shadow-xs">
+            {sortedLedger.length} Records
+          </span>
+        </div>
+
+        <div className="space-y-2 max-h-[220px] overflow-y-auto pr-0.5">
+          {sortedLedger.length === 0 ? (
+            <p className="text-center text-xs text-gray-400 py-6">No cash assignments recorded.</p>
+          ) : (
+            sortedLedger.map((item) => (
+              <div 
+                key={item.id}
+                className="flex items-center justify-between p-2.5 bg-black/40 border border-gray-700/50 rounded-xl hover:border-gray-600 transition"
+              >
+                <div>
+                  <h4 className="font-bold text-gray-100 text-[11px] flex items-center gap-1">
+                    <span className={`w-1.5 h-1.5 rounded-full ${item.type === 'budget' ? 'bg-indigo-400' : 'bg-green-400'}`} />
+                    {item.title}
+                  </h4>
+                  <p className="text-[9px] text-gray-400 mt-0.5 italic">
+                    {item.subtitle}
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <span className="text-sm font-extrabold text-white block">
+                    PKR {item.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                  <span className="text-[10px] text-gray-400 block mt-0.5 font-medium">
+                    {new Date(item.date).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+        
+        <div className="text-center mt-5">
+          <button 
+            type="button"
+            onClick={() => alert('Viewing complete consolidated account: showing both family expense limits and member direct allowance logs.')}
+            className="w-full py-2.5 text-xs text-indigo-300 hover:text-white hover:bg-indigo-600 transition font-bold bg-white/10 border border-indigo-500/30 rounded-xl shadow-sm"
+          >
+            View All Transactions
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/components/LoginScreen.tsx">
+import React, { useState } from 'react';
+import { useAppState } from '../context/StateContext';
+import { Mail, Lock, AlertCircle, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { motion } from 'motion/react';
+
+export const LoginScreen: React.FC = () => {
+  const { login, navigate, loading, customization, currentUser } = useAppState();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!email || !password) {
+      setError('Please fill in all fields.');
+      return;
+    }
+
+    try {
+      await login(email, password);
+    } catch (err: any) {
+      setError(err.message || 'Login failed. Please check your credentials.');
+    }
+  };
+
+  const isOwner = currentUser?.role === 'owner';
+  const accentColor = isOwner ? customization.primaryColor : '#22c55e';
+  const customBtnColor = isOwner ? customization.btnColor : '#000000';
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col justify-between p-6 bg-white"
+    >
+      {/* Upper Logo / Title */}
+      <div className="mt-8 text-center">
+        <div className="w-16 h-16 mx-auto rounded-2xl bg-green-50 flex items-center justify-center mb-4 border border-green-100">
+          <Sparkles className="w-8 h-8 text-green-500" />
+        </div>
+        <h2 className="text-2xl font-bold tracking-tight text-gray-900">Welcome Back</h2>
+        <p className="text-sm text-gray-500 mt-1">Please login to your account</p>
+      </div>
+
+      {/* Input Form */}
+      <form onSubmit={handleSubmit} className="flex-1 max-w-[360px] mx-auto mt-8 w-full flex flex-col justify-center space-y-4">
+        {error && (
+          <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Email Address</label>
+          <div className="relative">
+            <input 
+              type="email" 
+              placeholder="Email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 pl-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50"
+              required
+            />
+            <Mail className="absolute left-3 top-3.5 text-gray-400 w-4.5 h-4.5" />
+          </div>
+        </div>
+
+        <div>
+          <div className="flex justify-between items-center mb-1.5">
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">Password</label>
+            <button 
+              type="button"
+              onClick={() => alert(`Demo password reset: Any password works for local accounts! For registered accounts, standard login email configuration applies.`)}
+              className="text-xs font-semibold text-gray-400 hover:text-gray-600 transition"
+            >
+              Forgot Password?
+            </button>
+          </div>
+          <div className="relative">
+            <input 
+              type={showPassword ? 'text' : 'password'} 
+              placeholder="Password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 pl-10 pr-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50"
+              required
+            />
+            <Lock className="absolute left-3 top-3.5 text-gray-400 w-4.5 h-4.5" />
+            <button 
+              type="button" 
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600 transition"
+              title={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+            </button>
+          </div>
+        </div>
+
+        <button 
+          id="login_submit_btn"
+          type="submit"
+          disabled={loading}
+          className="w-full py-3.5 text-white font-semibold text-sm rounded-xl tracking-wide shadow-md transition-all active:scale-[0.98]"
+          style={{ backgroundColor: customBtnColor }}
+        >
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
+
+      {/* Footer register link */}
+      <div className="mb-4 text-center text-sm text-gray-500">
+        Don't have an account?{' '}
+        <button 
+          onClick={() => navigate('register')}
+          className="font-bold underline hover:text-gray-900 transition ml-1"
+          style={{ color: accentColor }}
+        >
+          Register
+        </button>
+      </div>
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/components/MobileFrame.tsx">
+import React from 'react';
+import { useAppState } from '../context/StateContext';
+
+interface MobileFrameProps {
+  children: React.ReactNode;
+}
+
+export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
+  const { customization, currentUser, firebaseMode } = useAppState();
+
+  // Determine if owner custom styles apply
+  const isOwner = currentUser?.role === 'owner';
+  
+  const themeStyles = isOwner ? {
+    backgroundColor: customization.bgColor,
+    color: customization.textColor,
+  } : {};
+
+  return (
+    <div className="min-h-screen bg-[#0f172a] bg-gradient-to-br from-indigo-950 via-slate-900 to-teal-950 py-8 px-4 sm:px-6 md:px-8 font-sans transition-colors duration-300 relative flex flex-col items-center justify-between">
+      {/* Premium Glass Blob Decorators */}
+      <div className="absolute top-10 left-10 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      {/* Visual Workspace Branding Header */}
+      <header className="w-full max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 z-10">
+        <div className="text-center sm:text-left">
+          <h1 className="text-white font-bold text-2xl sm:text-3xl tracking-tight">
+            Family Expense Manager
+          </h1>
+          <p className="text-slate-400 text-sm mt-1">
+            Real-time financial synchronization for your household
+          </p>
+        </div>
+        <div className="bg-slate-800/60 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/5 flex items-center gap-3">
+          <span className="text-xs text-slate-300">Firebase Sync:</span>
+          <span className={`inline-flex items-center gap-1 text-xs font-semibold ${firebaseMode === 'firebase' ? 'text-teal-400' : 'text-amber-400'}`}>
+            <span className={`w-2 h-2 rounded-full ${firebaseMode === 'firebase' ? 'bg-teal-400' : 'bg-amber-400'} animate-pulse`} />
+            {firebaseMode === 'firebase' ? 'Cloud RTDB' : 'Sandbox Cache'}
+          </span>
+        </div>
+      </header>
+
+      {/* Main Responsive Web App Container Card */}
+      <main 
+        className="w-full max-w-5xl bg-white/5 backdrop-blur-md rounded-3xl border border-white/15 shadow-2xl overflow-hidden transition-all duration-300 z-10 flex-grow flex flex-col p-4 sm:p-6 md:p-8 mb-6"
+        style={themeStyles}
+        id="phone_view_container"
+      >
+        <div className="flex-grow flex flex-col">
+          {children}
+        </div>
+      </main>
+
+      {isOwner && (
+        <footer className="w-full max-w-5xl mx-auto text-center z-10">
+          <p className="text-slate-500 text-xs">
+            Role Access: <strong className="text-slate-300">munibahmad47@gmail.com</strong> (Munib Ahmad) | Registered users sign in with their email.
+          </p>
+        </footer>
+      )}
+    </div>
+  );
+};
+</file>
+
+<file path="src/components/RegisterScreen.tsx">
+import React, { useState } from 'react';
+import { useAppState } from '../context/StateContext';
+import { User, Mail, Lock, AlertCircle, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { motion } from 'motion/react';
+
+export const RegisterScreen: React.FC = () => {
+  const { register, navigate, goBack, loading, customization, currentUser } = useAppState();
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!fullName || !email || !password || !confirmPassword) {
+      setError('Please fill in all fields.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.');
+      return;
+    }
+
+    try {
+      await register(fullName, email, password);
+    } catch (err: any) {
+      setError(err.message || 'Registration failed. Try another email.');
+    }
+  };
+
+  const isOwner = currentUser?.role === 'owner';
+  const accentColor = isOwner ? customization.primaryColor : '#22c55e';
+  const customBtnColor = isOwner ? customization.btnColor : '#000000';
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col justify-between p-6 bg-white"
+    >
+      {/* Header with Back button */}
+      <div className="flex items-center mt-2">
+        <button 
+          onClick={goBack} 
+          className="p-1 px-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition flex items-center font-semibold text-xs"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          Back
+        </button>
+      </div>
+
+      <div className="text-center mt-4">
+        <h2 className="text-2xl font-bold tracking-tight text-gray-900">Create Account</h2>
+        <p className="text-sm text-gray-500 mt-1">Fill in the details to register</p>
+      </div>
+
+      {/* Register Form */}
+      <form onSubmit={handleSubmit} className="flex-1 max-w-[360px] mx-auto mt-6 w-full flex flex-col justify-center space-y-3.5">
+        {error && (
+          <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Full Name</label>
+          <div className="relative">
+            <input 
+              type="text" 
+              placeholder="Full Name" 
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="w-full px-4 py-2.5 pl-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50"
+              required
+            />
+            <User className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Email</label>
+          <div className="relative">
+            <input 
+              type="email" 
+              placeholder="Email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2.5 pl-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50"
+              required
+            />
+            <Mail className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Password</label>
+          <div className="relative">
+            <input 
+              type={showPassword ? 'text' : 'password'} 
+              placeholder="Password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2.5 pl-10 pr-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50"
+              required
+            />
+            <Lock className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
+            <button 
+              type="button" 
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition p-0.5"
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Confirm Password</label>
+          <div className="relative">
+            <input 
+              type={showConfirmPassword ? 'text' : 'password'} 
+              placeholder="Confirm Password" 
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-4 py-2.5 pl-10 pr-10 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50"
+              required
+            />
+            <Lock className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
+            <button 
+              type="button" 
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition p-0.5"
+            >
+              {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
+          </div>
+        </div>
+
+        <button 
+          id="register_submit_btn"
+          type="submit"
+          disabled={loading}
+          className="w-full py-3 text-white font-semibold text-sm rounded-xl tracking-wide shadow-md transition-all active:scale-[0.98] mt-3"
+          style={{ backgroundColor: customBtnColor }}
+        >
+          {loading ? 'Creating account...' : 'Register'}
+        </button>
+      </form>
+
+      {/* Footer login link */}
+      <div className="mb-4 text-center text-sm text-gray-500">
+        Already have an account?{' '}
+        <button 
+          onClick={() => navigate('login')}
+          className="font-bold underline hover:text-gray-900 transition ml-1"
+          style={{ color: accentColor }}
+        >
+          Login
+        </button>
+      </div>
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/components/SettingsScreen.tsx">
+import React from 'react';
+import { useAppState } from '../context/StateContext';
+import { 
+  ArrowLeft, 
+  Users, 
+  Palette, 
+  BellRing, 
+  UserSquare2, 
+  LogOut, 
+  ChevronRight,
+  HandCoins,
+  AlertCircle
+} from 'lucide-react';
+import { motion } from 'motion/react';
+
+export const SettingsScreen: React.FC = () => {
+  const { goBack, navigate, logout, currentUser, customization, clearAllDummyData } = useAppState();
+
+  const handleAction = (type: string) => {
+    alert(`${type} controls configured standard! All features are synchronized via active cache database.`);
+  };
+
+  const isOwner = currentUser?.role === 'owner';
+  const textCustomColor = isOwner ? customization.textColor : '#000000';
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.99 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col justify-between p-6 bg-white rounded-2xl"
+    >
+      {/* Header */}
+      <div className="flex items-center mt-2 mb-6 justify-between border-b border-gray-100 pb-4">
+        <button 
+          onClick={goBack} 
+          className="py-2.5 px-5 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide hover:bg-slate-850 active:scale-95 transition flex items-center shadow-md"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+          Go Back
+        </button>
+        <span className="text-xs font-bold text-slate-950 bg-slate-50 px-3.5 py-1.5 rounded-full border border-slate-200">
+          ⚙️ settings
+        </span>
+      </div>
+
+      <div className="flex-1 max-w-[380px] mx-auto w-full flex flex-col justify-center space-y-5">
+        <div className="text-center mb-2">
+          <h2 className="text-xl font-extrabold text-slate-900 tracking-tight" style={{ color: textCustomColor }}>Settings</h2>
+          <p className="text-xs text-gray-400 mt-1">Configure family attributes and interface styling</p>
+        </div>
+
+        {/* List of Settings Options */}
+        <div className="space-y-3">
+          {isOwner && (
+            <>
+              {/* Option 1: Manage Users & Access */}
+              <button 
+                id="setting_manage_users_btn"
+                onClick={() => navigate('manage-users')}
+                className="w-full flex items-center justify-between p-4 border border-gray-100 hover:border-gray-200 rounded-2xl bg-white hover:bg-gray-50 transition text-sm font-bold text-left shadow-xs active:scale-[0.99] cursor-pointer"
+              >
+                <div className="flex items-center gap-3 text-gray-800">
+                  <Users className="w-5 h-5 text-indigo-500" />
+                  <span>Manage Users & Access</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </button>
+
+              {/* Option 2: App Customization */}
+              <button 
+                id="setting_customization_btn"
+                onClick={() => navigate('customization')}
+                className="w-full flex items-center justify-between p-4 border border-gray-100 hover:border-gray-200 rounded-2xl bg-white hover:bg-gray-50 transition text-sm font-bold text-left shadow-xs active:scale-[0.99] cursor-pointer"
+              >
+                <div className="flex items-center gap-3 text-gray-800">
+                  <Palette className="w-5 h-5 text-emerald-500" />
+                  <span>App Customization & Currency</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </button>
+
+              {/* Option 3: Add / Give Money Cash ledger */}
+              <button 
+                id="setting_give_money_btn"
+                onClick={() => navigate('give-money')}
+                className="w-full flex items-center justify-between p-4 border border-gray-100 hover:border-gray-200 rounded-2xl bg-white hover:bg-gray-50 transition text-sm font-bold text-left shadow-xs active:scale-[0.99] cursor-pointer"
+              >
+                <div className="flex items-center gap-3 text-gray-800">
+                  <HandCoins className="w-5 h-5 text-amber-500" />
+                  <span>Give Money Ledger</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </button>
+
+              {/* Option 4: Delete dummy entries / Wipe data (Requested) */}
+              <button 
+                id="setting_clear_dummy_btn"
+                onClick={async () => {
+                  if (confirm("Are you sure you want to delete all seeded dummy entries and transaction histories? This will restore a fresh, empty layout.")) {
+                    await clearAllDummyData();
+                    alert("All dummy entries successfully deleted! Database is now a fresh, clean slate.");
+                  }
+                }}
+                className="w-full flex items-center justify-between p-4 border border-red-100 hover:border-red-200 rounded-2xl bg-red-50/20 hover:bg-red-50/40 transition text-sm font-bold text-left shadow-xs active:scale-[0.99] cursor-pointer"
+              >
+                <div className="flex items-center gap-3 text-red-700">
+                  <AlertCircle className="w-5 h-5 text-red-500" />
+                  <span>Delete Dummy Entries</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-red-400" />
+              </button>
+            </>
+          )}
+
+          {/* Core options for everyone */}
+          <button 
+            onClick={() => navigate('notifications')}
+            className="w-full flex items-center justify-between p-4 border border-gray-100 hover:border-gray-200 rounded-2xl bg-white hover:bg-gray-50 transition text-sm font-bold text-left shadow-xs active:scale-[0.99] cursor-pointer"
+          >
+            <div className="flex items-center gap-3 text-gray-800">
+              <BellRing className="w-5 h-5 text-rose-500" />
+              <span>Notifications</span>
+            </div>
+            <ChevronRight className="w-4 h-4 text-gray-450" />
+          </button>
+
+          <button 
+            onClick={() => handleAction('Account Settings')}
+            className="w-full flex items-center justify-between p-4 border border-gray-100 hover:border-gray-200 rounded-2xl bg-white hover:bg-gray-50 transition text-sm font-bold text-left shadow-xs active:scale-[0.99] cursor-pointer"
+          >
+            <div className="flex items-center gap-3 text-gray-800">
+              <UserSquare2 className="w-5 h-5 text-blue-500" />
+              <span>Account Settings</span>
+            </div>
+            <ChevronRight className="w-4 h-4 text-gray-450" />
+          </button>
+        </div>
+      </div>
+
+      {/* Logout options */}
+      <div className="mt-8 border-t border-gray-100 pt-4 text-center">
+        <button 
+          id="setting_logout_btn"
+          onClick={logout}
+          className="inline-flex items-center gap-2 px-6 py-3 font-semibold text-sm text-red-500 hover:text-red-700 hover:bg-red-50/50 rounded-xl transition-all cursor-pointer"
+        >
+          <LogOut className="w-4.5 h-4.5" />
+          Logout
+        </button>
+        <p className="text-[10px] text-gray-400 mt-2 font-semibold">
+          Signed in user: {currentUser?.email}
+        </p>
+      </div>
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/components/WantToBuyScreen.tsx">
+import React from 'react';
+import { useAppState } from '../context/StateContext';
+import { 
+  ArrowLeft, 
+  Plus, 
+  Edit3, 
+  Trash2, 
+  CheckSquare, 
+  Square, 
+  ShoppingBag,
+  User,
+  CheckCircle,
+  HelpCircle
+} from 'lucide-react';
+import { motion } from 'motion/react';
+
+export const WantToBuyScreen: React.FC = () => {
+  const { 
+    wantToBuyItems, 
+    toggleWantToBuyItem, 
+    deleteWantToBuyItem, 
+    activeMonth, 
+    goBack, 
+    navigate, 
+    customization,
+    currentUser
+  } = useAppState();
+
+  // Filter items by active month
+  const displayItems = wantToBuyItems.filter(item => item.month === activeMonth);
+
+  const completedCount = displayItems.filter(i => i.checked).length;
+  const pendingCount = displayItems.length - completedCount;
+
+  // Custom colors based on owner options
+  const isOwner = currentUser?.role === 'owner';
+  const customChkColor = isOwner ? customization.chkColor : '#22c55e';
+  const customDelColor = isOwner ? customization.delBtnColor : '#ef4444';
+  const customBtnColor = isOwner ? customization.btnColor : '#000000';
+
+  const monthDisplayNames: Record<string, string> = {
+    '2026-04': 'April 2026',
+    '2026-05': 'May 2026',
+    '2026-06': 'June 2026',
+    '2026-07': 'July 2026',
+    '2026-08': 'August 2026',
+  };
+  const readableMonth = monthDisplayNames[activeMonth] || activeMonth;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col p-5 bg-white"
+    >
+      {/* Navigation Title Bar */}
+      <div className="flex items-center justify-between mt-2 mb-5">
+        <button 
+          onClick={goBack} 
+          className="py-2.5 px-5 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide hover:bg-slate-850 active:scale-95 transition flex items-center shadow-lg hover:shadow-xl"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+          Go Back
+        </button>
+        <span className="text-xs font-bold text-gray-950 bg-slate-50 px-3.5 py-1.5 rounded-full border border-slate-200">
+          🛒 {readableMonth} list
+        </span>
+      </div>
+
+      {/* Summary Box */}
+      <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center">
+            <ShoppingBag className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="font-bold text-gray-900 text-sm">Shopping List</h4>
+            <p className="text-xs text-slate-500 mt-0.5">
+              {pendingCount} Pending • {completedCount} Done
+            </p>
+          </div>
+        </div>
+
+        {/* Small Progress Donut / Indicator */}
+        <div className="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
+          {displayItems.length > 0 
+            ? `${((completedCount / displayItems.length) * 100).toFixed(0)}% Done` 
+            : 'Empty'}
+        </div>
+      </div>
+
+      {/* Want to Buy Items List and Add Button */}
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="font-bold text-gray-900 text-sm tracking-wide">Want to Buy</h3>
+        <button 
+          id="add_item_btn"
+          onClick={() => navigate('add-buy-item')}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-white font-semibold text-xs rounded-xl transition shadow-xs active:scale-[0.97]"
+          style={{ backgroundColor: customBtnColor }}
+        >
+          <Plus className="w-3.5 h-3.5" />
+          Add Item
+        </button>
+      </div>
+
+      {/* Items Rows */}
+      <div className="flex-1 overflow-y-auto space-y-2.5 pr-1 max-h-[460px]">
+        {displayItems.length === 0 ? (
+          <div className="border border-dashed border-gray-100 rounded-2xl py-12 text-center">
+            <p className="text-gray-400 text-xs">No items in the wishlist for {readableMonth}.</p>
+            <button 
+              onClick={() => navigate('add-buy-item')}
+              className="mt-2 text-xs font-semibold underline text-blue-600 hover:text-blue-800"
+            >
+              Add First Wishlist Item
+            </button>
+          </div>
+        ) : (
+          displayItems.map((item) => (
+            <div 
+              key={item.id}
+              className={`flex items-center justify-between p-3 border rounded-2xl transition-all ${
+                item.checked 
+                  ? 'bg-gray-50/50 border-gray-100 opacity-70' 
+                  : 'bg-white border-gray-100 shadow-xs'
+              }`}
+            >
+              {/* Checkbox and description */}
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => toggleWantToBuyItem(item.id)}
+                  className="flex-shrink-0 transition-transform active:scale-95"
+                  style={{ color: item.checked ? customChkColor : '#cbd5e1' }}
+                  title={item.checked ? 'Mark pending' : 'Mark done'}
+                >
+                  {item.checked ? (
+                    <CheckSquare className="w-5 h-5" style={{ color: customChkColor }} />
+                  ) : (
+                    <Square className="w-5 h-5 text-gray-300 hover:text-gray-400" />
+                  )}
+                </button>
+                
+                <div>
+                  <h4 className={`font-bold text-[13px] ${item.checked ? 'line-through text-gray-400 font-medium' : 'text-gray-900'}`}>
+                    {item.name}
+                  </h4>
+                  <span className="text-[10px] text-gray-400 block mt-0.5 flex items-center gap-1">
+                    <User className="w-2.5 h-2.5" />
+                    By {item.userName || 'Member'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Quantity indicator & controls */}
+              <div className="flex items-center gap-3">
+                <span className="font-bold text-xs bg-gray-100/80 px-2.5 py-1 rounded-lg text-gray-700 min-w-[32px] text-center border border-gray-200/50">
+                  {item.quantity}
+                </span>
+
+                {/* Edit & Delete Actions */}
+                <div className="flex items-center gap-1.5 border-l border-gray-100 pl-3">
+                  <button 
+                    onClick={() => navigate('add-buy-item', { editId: item.id })}
+                    className="p-1.5 rounded-lg border border-gray-100 hover:bg-gray-50 text-gray-500 hover:text-gray-900 transition flex items-center justify-center font-medium"
+                    title="Edit quantity/name"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                  </button>
+
+                  <button 
+                    onClick={() => deleteWantToBuyItem(item.id)}
+                    className="p-1.5 rounded-lg border border-red-50 hover:bg-red-50 text-red-500 transition flex items-center justify-center font-medium"
+                    style={{ color: customDelColor }}
+                    title="Delete item"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Rules Notice */}
+      <div className="mt-4 p-3 rounded-xl bg-green-50/50 border border-green-100 text-[10px] text-green-800 leading-relaxed font-semibold">
+        💡 All users (including owner) share this list. Checked items act as shopping completed tasks.
+      </div>
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/components/ChooseOptionScreen.tsx">
+import React from 'react';
+import { useAppState } from '../context/StateContext';
+import { Landmark, ShoppingCart, Settings, Users, LogOut, ShieldAlert, BellRing } from 'lucide-react';
+import { motion } from 'motion/react';
+
+export const ChooseOptionScreen: React.FC = () => {
+  const { currentUser, logout, navigate, setActiveFlow, customization } = useAppState();
+
+  const handleSelectFlow = (flow: 'expense' | 'buy') => {
+    setActiveFlow(flow);
+    navigate('select-month');
+  };
+
+  const isOwner = currentUser?.role === 'owner';
+  const textCustomColor = isOwner ? customization.textColor : '#000000';
+  const customBtnColor = isOwner ? customization.btnColor : '#000000';
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col justify-between p-6 bg-white"
+    >
+      {/* Top Welcome Title */}
+      <div className="mt-4 flex justify-between items-start">
+        <div>
+          <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Active Member</span>
+          <h2 className="text-xl font-bold text-gray-900 mt-0.5" style={{ color: textCustomColor }}>
+            Hello, {currentUser?.fullName || 'Family User'}
+          </h2>
+          <p className="text-xs text-gray-500">{currentUser?.role === 'owner' ? '👑 Account Owner' : '👥 Family Member'}</p>
+        </div>
+        <button 
+          onClick={logout}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 font-bold transition shadow-sm text-xs"
+          title="Sign Out"
+        >
+          <LogOut className="w-4 h-4 stroke-[2.5]" />
+          Logout
+        </button>
+      </div>
+
+      <div className="my-auto space-y-6 max-w-[360px] mx-auto w-full">
+        <div className="text-center">
+          <h3 className="text-lg font-bold text-gray-900">Choose an option</h3>
+          <p className="text-xs text-gray-500 mt-1">Select what you want to do</p>
+        </div>
+
+        {/* Action Button Blocks */}
+        <div className="space-y-4">
+          {/* Expense Management */}
+          <button 
+            id="option_expense_btn"
+            onClick={() => handleSelectFlow('expense')}
+            className="w-full flex items-center p-4 border border-gray-100 rounded-2xl bg-white hover:bg-gray-50 hover:border-green-300 shadow-sm transition-all text-left group active:scale-[0.99]"
+          >
+            <div className="w-12 h-12 rounded-xl bg-green-50 text-green-500 flex items-center justify-center mr-4 group-hover:bg-green-100 transition-colors">
+              <Landmark className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="font-bold text-gray-900 text-sm">Expense Management</h4>
+              <p className="text-xs text-gray-500 mt-0.5">Track daily bills, groceries, and balances</p>
+            </div>
+          </button>
+
+          {/* Want to Buy */}
+          <button 
+            id="option_buy_btn"
+            onClick={() => handleSelectFlow('buy')}
+            className="w-full flex items-center p-4 border border-gray-100 rounded-2xl bg-white hover:bg-gray-50 hover:border-blue-300 shadow-sm transition-all text-left group active:scale-[0.99]"
+          >
+            <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center mr-4 group-hover:bg-blue-100 transition-colors">
+              <ShoppingCart className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="font-bold text-gray-900 text-sm">Want to Buy</h4>
+              <p className="text-xs text-gray-500 mt-0.5">Collaborative grocery and wishlist todo list</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Owner-Specific Foot Control Links */}
+      {isOwner ? (
+        <div className="border-t border-gray-100 pt-4 mt-4 space-y-2">
+          <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center mb-2">Owner Controls</h4>
+          <div className="grid grid-cols-3 gap-2">
+            <button 
+              onClick={() => navigate('manage-users')}
+              className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-gray-100 hover:bg-gray-50 text-xs font-semibold text-gray-700 transition"
+            >
+              <Users className="w-3.5 h-3.5" />
+              Users
+            </button>
+            <button 
+              onClick={() => navigate('notifications')}
+              className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-gray-100 hover:bg-gray-50 text-xs font-semibold text-gray-700 transition"
+            >
+              <BellRing className="w-3.5 h-3.5" />
+              Alerts
+            </button>
+            <button 
+              onClick={() => navigate('settings')}
+              className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-gray-100 hover:bg-gray-50 text-xs font-semibold text-gray-700 transition"
+            >
+              <Settings className="w-3.5 h-3.5" />
+              Settings
+            </button>
+          </div>
+        </div>
+      ) : (
+        // Authorized user quick indicators
+        currentUser?.permissions?.addBudget && (
+          <div className="text-center">
+            <button 
+              onClick={() => navigate('settings')}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-xs font-semibold text-gray-600 transition"
+            >
+              <Settings className="w-3.5 h-3.5" />
+              Member Toolbar
+            </button>
+          </div>
+        )
+      )}
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/types.ts">
+export interface UserPermissions {
+  addBudget: boolean;
+  seeTotalSpending: boolean;
+  addGiveMoney: boolean;
+  viewAllTransactions: boolean;
+  manageWantToBuy: boolean;
+  appCustomization: boolean;
+  manageUsers: boolean;
+  viewNotifications: boolean;
+}
+
+export interface UserProfile {
+  uid: string;
+  email: string;
+  fullName: string;
+  role: 'owner' | 'authorized_user';
+  permissions?: UserPermissions;
+}
+
+export interface Expense {
+  id: string;
+  title: string;
+  amount: number;
+  date: string; // YYYY-MM-DD
+  details?: string;
+  userId: string;
+  userEmail: string;
+  userName: string;
+  month: string; // YYYY-MM
+  createdAt?: number;
+}
+
+export interface WantToBuyItem {
+  id: string;
+  name: string;
+  quantity: number;
+  checked: boolean;
+  userId: string;
+  userName: string;
+  month: string; // e.g. "June 2026" or YYYY-MM
+}
+
+export interface GiveMoneyTransaction {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  amount: number;
+  purpose: string;
+  date: string; // YYYY-MM-DD
+  addedBy: string;
+}
+
+export interface MonthlyBudget {
+  month: string; // YYYY-MM
+  amount: number;
+  setBy: string;
+  createdAt?: string; // Exact date of setting the budget
+  userEmail?: string; // Email of the user who set the budget
+}
+
+export interface AppCustomization {
+  bgColor: string; // hex
+  textColor: string; // hex
+  primaryColor: string; // hex
+  btnColor: string; // hex
+  chkColor: string; // hex
+  delBtnColor: string; // hex
+  currency?: string; // PKR, USD, etc.
+  currencyScope?: 'global' | 'specific'; // applies to whole app or specific users
+  userCurrencies?: Record<string, string>; // mapping from user ID to selected currency
+}
+
+export interface AppNotification {
+  id: string;
+  title: string;
+  message: string;
+  timestamp: number;
+  read?: boolean;
+}
+</file>
+
+<file path="src/components/ManageUsersScreen.tsx">
+import React, { useState } from 'react';
+import { useAppState } from '../context/StateContext';
+import { 
+  ArrowLeft, 
+  Plus, 
+  Trash2, 
+  Settings2, 
+  ShieldCheck, 
+  UserPlus, 
+  Mail, 
+  ChevronRight, 
+  X,
+  User,
+  ShieldAlert,
+  AlertCircle
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+
+export const ManageUsersScreen: React.FC = () => {
+  const { users, removeUserAccess, goBack, navigate, customization, currentUser, addNotification } = useAppState();
+
+  const [selectedUser, setSelectedUser] = useState<typeof users[0] | null>(null);
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  // Display all users including the owner
+  const listUsers = users;
+
+  const handleSelectUser = (user: typeof users[0]) => {
+    setSelectedUser(user);
+  };
+
+  const handleRemoveAccess = async (userId: string) => {
+    if (confirm('Are you sure you want to revoke this user\'s access to the family expenses system?')) {
+      const removedUser = users.find(u => u.uid === userId);
+      await removeUserAccess(userId);
+      await addNotification('Member Revoked', `Access has been fully removed for ${removedUser?.fullName || 'User'}`);
+      setSelectedUser(null);
+    }
+  };
+
+  const handleAddUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!newUserName.trim() || !newUserEmail.trim()) {
+      setError('Please provide Name and Email');
+      return;
+    }
+
+    try {
+      // Create user node in DB (usually, they complete register independently but owner puts them in the family whitelist)
+      const userId = `u_whitelisted_${Date.now()}`;
+      const newUser = {
+        uid: userId,
+        email: newUserEmail,
+        fullName: newUserName,
+        role: 'authorized_user' as const,
+        permissions: {
+          addBudget: false,
+          seeTotalSpending: true,
+          addGiveMoney: false,
+          viewAllTransactions: false,
+          manageWantToBuy: true,
+          appCustomization: false,
+          manageUsers: false,
+          viewNotifications: false,
+        }
+      };
+      
+      // Save
+      // Standard import path to DB:
+      const { SmartDBService } = await import('../lib/firebase');
+      await SmartDBService.set(`users/${userId}`, newUser);
+      await addNotification('Member Whiitelisted', `New family member whitelisted: ${newUserName}`);
+
+      // Clear & Close
+      setNewUserName('');
+      setNewUserEmail('');
+      setShowAddUserModal(false);
+    } catch (err: any) {
+      setError(err.message || 'Error whitelisting member');
+    }
+  };
+
+  const isOwner = currentUser?.role === 'owner';
+  const customPrimary = isOwner ? customization.primaryColor : '#22c55e';
+  const customBtnColor = isOwner ? customization.btnColor : '#000000';
+  const customDelColor = isOwner ? customization.delBtnColor : '#ef4444';
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col p-5 bg-white relative justify-between"
+    >
+      <div>
+        {/* Navigation Head */}
+        <div className="flex items-center justify-between mt-2 mb-4">
+          <button 
+            onClick={goBack} 
+            className="py-2.5 px-5 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide hover:bg-slate-850 active:scale-95 transition flex items-center shadow-lg hover:shadow-xl"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+            Go Back
+          </button>
+          
+          {/* Add Whitelisted Member */}
+          <button
+            onClick={() => setShowAddUserModal(true)}
+            className="flex items-center gap-1 bg-indigo-50 border border-indigo-100 px-2.5 py-1 text-indigo-700 hover:bg-indigo-100 font-bold text-xs rounded-xl transition"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            Add User
+          </button>
+        </div>
+
+        {/* STEP 16: MANAGE USERS SCREEN */}
+        {!selectedUser ? (
+          <div>
+            <div className="mb-4">
+              <h3 className="font-bold text-gray-900 text-sm">Manage Users & Access</h3>
+              <p className="text-xs text-gray-500 mt-0.5">Control who can access accounts and modules</p>
+            </div>
+
+            {/* List */}
+            <div className="space-y-2.5 max-h-[500px] overflow-y-auto pr-0.5">
+              {listUsers.map((user) => (
+                <button
+                  key={user.uid}
+                  onClick={() => handleSelectUser(user)}
+                  className="w-full flex items-center justify-between p-3.5 hover:bg-gray-50 border border-gray-100 rounded-2xl text-left transition shadow-xs active:scale-[0.99] bg-white group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 font-extrabold border shadow-inner">
+                      {user.fullName.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900 text-xs">{user.fullName}</h4>
+                      <p className="text-[10px] text-gray-500 mt-0.5 flex items-center gap-1">
+                        <Mail className="w-3 h-3 text-gray-400" />
+                        {user.email}
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:translate-x-0.5 transition-transform" />
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          /* STEP 17: CHOOSE COMPONENT OPTIONS FOR SELECTED USER */
+          <motion.div 
+            initial={{ opacity: 0, x: -15 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="p-5 border border-gray-100 rounded-3xl bg-slate-50/50 text-center"
+          >
+            {/* Back to list */}
+            <button 
+              onClick={() => setSelectedUser(null)}
+              className="inline-flex items-center gap-1 py-1 px-2.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-150 text-[10px] font-bold text-gray-600 mb-5 text-left float-left transition"
+            >
+              ← Back to Users List
+            </button>
+            <div className="clear-both" />
+
+            {/* Detail info */}
+            <div className="w-16 h-16 rounded-full bg-indigo-50 border border-indigo-100/50 flex items-center justify-center mx-auto text-indigo-600 font-black text-2xl shadow-inner mb-3">
+              {selectedUser.fullName.charAt(0).toUpperCase()}
+            </div>
+            <h3 className="font-bold text-gray-900 text-base">{selectedUser.fullName}</h3>
+            <p className="text-xs text-gray-500 flex items-center justify-center gap-1 mt-0.5">
+              <Mail className="w-3.5 h-3.5 text-gray-400" />
+              {selectedUser.email}
+            </p>
+
+            {/* Selection Buttons */}
+            <div className="space-y-3 mt-6">
+              {/* Access & Permissions */}
+              <button
+                id="update_user_permissions_btn"
+                onClick={() => navigate('permissions-set', { userId: selectedUser.uid })}
+                className="w-full py-3 bg-white hover:bg-indigo-50 border border-indigo-150 text-indigo-700 font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 active:scale-[0.98]"
+              >
+                <Settings2 className="w-4 h-4" />
+                Access & Permissions
+              </button>
+
+              {/* Remove Access */}
+              {selectedUser.uid !== currentUser?.uid && (
+                <button
+                  id="remove_user_access_btn"
+                  onClick={() => handleRemoveAccess(selectedUser.uid)}
+                  className="w-full py-3 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 active:scale-[0.98] hover:bg-red-750"
+                  style={{ backgroundColor: customDelColor }}
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete User
+                </button>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Whitelisted Add User Modal Overlay */}
+      <AnimatePresence>
+        {showAddUserModal && (
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-6 z-40">
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl p-5 w-full max-w-[320px] border border-gray-100 shadow-xl"
+            >
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="font-bold text-gray-900 text-sm">Add Whitelisted Member</h4>
+                <button 
+                  onClick={() => setShowAddUserModal(false)}
+                  className="p-1 text-gray-400 hover:text-gray-700 rounded-lg"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {error && (
+                <div className="p-2 rounded-xl bg-red-50 text-red-600 text-[10px] font-semibold mb-2.5 flex items-center gap-1 select-none">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleAddUser} className="space-y-3">
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                    Display Name
+                  </label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. Ali, Sara"
+                    value={newUserName}
+                    onChange={(e) => setNewUserName(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-250 rounded-xl text-xs focus:ring-1 focus:ring-indigo-150 focus:outline-none"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                    Email Address
+                  </label>
+                  <input 
+                    type="email" 
+                    placeholder="member@example.com"
+                    value={newUserEmail}
+                    onChange={(e) => setNewUserEmail(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-250 rounded-xl text-xs focus:ring-1 focus:ring-indigo-150 focus:outline-none"
+                    required
+                  />
+                </div>
+
+                <button 
+                  type="submit"
+                  className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-sm transition mt-2"
+                >
+                  Whitelist Member
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <div className="text-center text-[10px] text-gray-400 font-semibold mb-2 mt-4">
+        🛡️ Whitelisted family members can login and access whitelisted modules.
+      </div>
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/components/SelectMonthScreen.tsx">
+import React from 'react';
+import { useAppState } from '../context/StateContext';
+import { ArrowLeft, Calendar } from 'lucide-react';
+import { motion } from 'motion/react';
+
+export const SelectMonthScreen: React.FC = () => {
+  const state = useAppState();
+  const { goBack, activeMonth, setActiveMonth, activeFlow, navigate, currentUser } = state;
+
+  const months = [
+    { value: '2026-04', label: 'April 2026' },
+    { value: '2026-05', label: 'May 2026' },
+    { value: '2026-06', label: 'June 2026' },
+    { value: '2026-07', label: 'July 2026' },
+    { value: '2026-08', label: 'August 2026' },
+  ];
+
+  // Instantly select of month and redirect
+  const handleSelectMonth = (monthVal: string) => {
+    state.setActiveMonth(monthVal);
+    if (state.activeFlow === 'expense') {
+      state.navigate('expense-list');
+    } else {
+      state.navigate('want-to-buy');
+    }
+  };
+
+  const isOwner = state.currentUser?.role === 'owner';
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col justify-between p-6 bg-white rounded-2xl"
+    >
+      {/* Header with Prominent Back button */}
+      <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
+        <button 
+          onClick={state.goBack} 
+          className="py-2.5 px-5 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide hover:bg-slate-850 active:scale-95 transition flex items-center shadow-lg hover:shadow-xl"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+          Go Back
+        </button>
+        <span className="text-xs uppercase tracking-widest font-extrabold text-blue-700 bg-blue-50 px-4 py-1.5 rounded-full border-2 border-blue-200 shadow-sm">
+          Step 2: Period List
+        </span>
+      </div>
+
+      <div className="text-center mt-2 mb-6">
+        <h3 className="text-xl font-extrabold text-gray-900 tracking-tight">Select Month</h3>
+        <p className="text-xs text-gray-500 mt-1.5">Click any month below to instantly open your budget profile</p>
+      </div>
+
+      {/* Choice Listing with instant-routing */}
+      <div className="flex-1 my-2 space-y-3 flex flex-col justify-center max-w-[400px] mx-auto w-full">
+        {months.map((m) => {
+          const isSelected = state.activeMonth === m.value;
+          return (
+            <button
+              key={m.value}
+              onClick={() => handleSelectMonth(m.value)}
+              className={`w-full flex items-center justify-between p-4.5 border-2 rounded-2xl transition-all duration-200 text-sm font-bold text-left hover:scale-[1.01] active:scale-[0.99] cursor-pointer ${
+                isSelected 
+                  ? 'border-teal-500 bg-teal-50/20 text-teal-950 shadow-sm' 
+                  : 'border-slate-100 hover:border-slate-350 text-slate-700 bg-slate-50'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <span className={isSelected ? 'text-teal-600 font-extrabold' : 'text-slate-900 font-extrabold text-base'}>
+                  {m.label}
+                </span>
+              </div>
+              <Calendar className={`w-5 h-5 ${isSelected ? 'text-teal-500' : 'text-slate-800 stroke-[2.5]'}`} />
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-8 pt-4 border-t border-gray-150 text-center">
+        <p className="text-[11px] text-gray-400">
+          Flow: {state.activeFlow === 'expense' ? 'Expense Management Toolbar' : 'Want to Buy Items List'}
+        </p>
+      </div>
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/components/AddEditExpenseScreen.tsx">
+import React, { useState, useEffect } from 'react';
+import { useAppState } from '../context/StateContext';
+import { ArrowLeft, Save, Calendar, Landmark, AlertCircle } from 'lucide-react';
+import { motion } from 'motion/react';
+
+export const AddEditExpenseScreen: React.FC = () => {
+  const { 
+    addExpense, 
+    editExpense, 
+    expenses, 
+    goBack, 
+    currentScreenParams, 
+    activeMonth,
+    customization,
+    currentUser,
+    getCurrencySymbol
+  } = useAppState();
+
+  const editId = currentScreenParams?.editId;
+  const isEdit = !!editId;
+
+  const [title, setTitle] = useState('');
+  const [amount, setAmount] = useState('');
+  const [date, setDate] = useState(() => {
+    // Return standard formatted date
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  });
+  const [details, setDetails] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isEdit) {
+      const existing = expenses.find(e => e.id === editId);
+      if (existing) {
+        setTitle(existing.title);
+        setAmount(existing.amount.toString());
+        setDate(existing.date);
+        setDetails(existing.details || '');
+      }
+    }
+  }, [isEdit, editId, expenses]);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!title || !amount) {
+      setError('Please fill in required fields (Title, Amount).');
+      return;
+    }
+
+    const amtNum = parseFloat(amount);
+    if (isNaN(amtNum) || amtNum <= 0) {
+      setError('Amount must be a valid positive number.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      if (isEdit) {
+        await editExpense(editId, {
+          title,
+          amount: amtNum,
+          date,
+          details
+        });
+      } else {
+        await addExpense({
+          title,
+          amount: amtNum,
+          date,
+          details
+        });
+      }
+      goBack();
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while saving.');
+      setIsSubmitting(false);
+    }
+  };
+
+  const isOwner = currentUser?.role === 'owner';
+  const customBtnColor = isOwner ? customization.btnColor : '#000000';
+
+  if (isSubmitting) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center bg-white p-6">
+        <div className="w-12 h-12 rounded-full border-4 border-transparent border-t-indigo-500 border-r-teal-500 border-b-green-500 animate-spin" />
+        <span className="text-sm text-slate-600 font-semibold mt-4">
+          {isEdit ? 'Updating expense...' : 'Saving expense...'}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.99 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col justify-between p-6 bg-white"
+    >
+      {/* Header with Save text indicator */}
+      <div className="flex items-center justify-between mt-2 mb-6">
+        <button 
+          onClick={goBack} 
+          className="py-2 px-4 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide hover:bg-slate-850 active:scale-95 transition flex items-center shadow-lg hover:shadow-xl"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+          Go Back
+        </button>
+        <h3 className="font-bold text-gray-950 text-sm">
+          {isEdit ? 'Edit Expense' : 'Add Expense'}
+        </h3>
+        <button 
+          onClick={handleSave}
+          className="text-xs font-bold text-green-600 hover:text-green-800 transition flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg border border-green-100"
+        >
+          <Save className="w-3.5 h-3.5" />
+          Save
+        </button>
+      </div>
+
+      <form onSubmit={handleSave} className="flex-1 space-y-4 max-w-[360px] mx-auto w-full flex flex-col justify-center">
+        {error && (
+          <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Title Field */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            Title
+          </label>
+          <div className="relative">
+            <input 
+              type="text"
+              placeholder="e.g., Grocery, Electricity Bill"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50 font-medium"
+            />
+          </div>
+        </div>
+
+        {/* Amount Field */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            Amount ({getCurrencySymbol(currentUser?.uid)})
+          </label>
+          <div className="relative">
+            <input 
+              type="number"
+              step="any"
+              placeholder="0.00"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50 font-bold"
+            />
+          </div>
+        </div>
+
+        {/* Date Field */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            Date
+          </label>
+          <div className="relative">
+            <input 
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50 font-medium text-gray-600"
+            />
+          </div>
+        </div>
+
+        {/* Details Field */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            Details
+          </label>
+          <textarea 
+            placeholder="Enter additional details (weekly grocery setup, wifi billing, etc.)"
+            value={details}
+            onChange={(e) => setDetails(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50 h-24 resize-none font-medium text-gray-600"
+          />
+        </div>
+
+        <button 
+          id="expense_save_btn"
+          type="button"
+          onClick={handleSave}
+          className="w-full py-3.5 bg-black text-white font-semibold text-sm rounded-xl tracking-wide shadow-md transition-all active:scale-[0.98] mt-4 z-10 relative"
+        >
+          {isEdit ? 'Update Expense' : 'Save Expense'}
+        </button>
+      </form>
+
+      <div className="mt-4 text-center text-[10px] text-gray-400 font-medium">
+        Active Billing Period: <strong className="text-gray-600">{activeMonth}</strong>
+      </div>
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/components/NotificationsScreen.tsx">
+import React, { useState } from 'react';
+import { useAppState } from '../context/StateContext';
+import { ArrowLeft, BellRing, ChevronRight, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { AppNotification } from '../types';
+
+export const NotificationsScreen: React.FC = () => {
+  const { goBack, notifications, customization } = useAppState();
+  const [selectedNotif, setSelectedNotif] = useState<AppNotification | null>(null);
+  const [clearedIds, setClearedIds] = useState<string[]>([]);
+
+  const textCustomColor = customization.textColor;
+
+  const visibleNotifications = notifications.filter(n => !clearedIds.includes(n.id));
+
+  const handleClearNotif = () => {
+    if (selectedNotif) {
+      setClearedIds(prev => [...prev, selectedNotif.id]);
+      setSelectedNotif(null);
+    }
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.99 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col p-6 bg-white rounded-2xl relative"
+    >
+      {/* Header */}
+      <div className="flex items-center mt-2 mb-6 justify-between border-b border-gray-100 pb-4">
+        <button 
+          onClick={goBack} 
+          className="py-2.5 px-5 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide hover:bg-slate-850 active:scale-95 transition flex items-center shadow-md"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+          Go Back
+        </button>
+        <span className="text-xs font-bold text-emerald-950 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-200 flex items-center">
+          <BellRing className="w-3 h-3 mr-1.5" />
+          Notifications
+        </span>
+      </div>
+
+      <div className="flex-1 overflow-y-auto pr-2 pb-10 space-y-3">
+        {visibleNotifications.length === 0 ? (
+          <div className="text-center mt-20 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+            <BellRing className="w-12 h-12 mx-auto text-gray-300 mb-3" />
+            <h3 className="text-sm font-bold text-gray-500">No Notifications</h3>
+            <p className="text-xs text-gray-400 mt-1">Updates and events will appear here.</p>
+          </div>
+        ) : (
+          visibleNotifications.map(notif => (
+            <div 
+              key={notif.id}
+              onClick={() => setSelectedNotif(notif)}
+              className="p-4 bg-transparent hover:bg-gray-50 border border-gray-100 rounded-2xl shadow-xs flex justify-between items-center cursor-pointer transition select-none active:scale-[0.99]"
+            >
+              <div className="flex items-start gap-3 flex-1 overflow-hidden">
+                <div className="p-2 bg-red-50 rounded-lg flex-shrink-0 mt-0.5">
+                  <BellRing className="w-4 h-4 text-red-500" />
+                </div>
+                <div className="flex-1 min-w-0 pr-4">
+                  <h4 className="text-sm font-bold text-black truncate">
+                    {notif.title}
+                  </h4>
+                  <p className="text-xs text-teal-600 mt-1 truncate">
+                    {notif.message}
+                  </p>
+                  <span className="text-[10px] font-medium text-gray-400 mt-2 block">
+                    {new Date(notif.timestamp).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" />
+            </div>
+          ))
+        )}
+      </div>
+
+      <AnimatePresence>
+        {selectedNotif && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm z-10 flex items-center justify-center p-6"
+            onClick={() => setSelectedNotif(null)}
+          >
+            <motion.div
+              initial={{ y: 20, scale: 0.95 }}
+              animate={{ y: 0, scale: 1 }}
+              exit={{ y: 20, scale: 0.95 }}
+              onClick={e => e.stopPropagation()}
+              className="bg-black border border-gray-800 shadow-xl rounded-2xl w-full max-w-sm p-6 relative"
+            >
+              <button 
+                onClick={() => setSelectedNotif(null)}
+                className="absolute top-4 right-4 p-2 bg-gray-900 rounded-full hover:bg-gray-800 text-gray-400 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              
+              <div className="flex items-center gap-3 mb-5 border-b border-gray-800 pb-4">
+                <div className="p-3 bg-red-950/40 rounded-xl">
+                  <BellRing className="w-5 h-5 text-red-500" />
+                </div>
+                <h3 className="font-bold text-white tracking-tight">
+                  {selectedNotif.title}
+                </h3>
+              </div>
+
+              <div className="space-y-4 text-sm text-gray-400">
+                <div>
+                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Details</h4>
+                  <p className="leading-relaxed bg-gray-900 p-3 rounded-lg border border-gray-800 text-teal-400">
+                    {selectedNotif.message}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Timestamp</h4>
+                  <p className="font-medium text-gray-300">
+                    {new Date(selectedNotif.timestamp).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <button
+                  onClick={handleClearNotif}
+                  className="w-full py-2.5 px-4 bg-gradient-to-r from-teal-500 via-white to-black text-red-600 font-bold text-xs rounded-xl transition shadow-sm hover:opacity-90"
+                >
+                  Clear Notification
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/App.tsx">
+import React from 'react';
+import { StateProvider, useAppState } from './context/StateContext';
+import { MobileFrame } from './components/MobileFrame';
+import { LoginScreen } from './components/LoginScreen';
+import { RegisterScreen } from './components/RegisterScreen';
+import { ChooseOptionScreen } from './components/ChooseOptionScreen';
+import { SelectMonthScreen } from './components/SelectMonthScreen';
+import { ExpenseListScreen } from './components/ExpenseListScreen';
+import { AddEditExpenseScreen } from './components/AddEditExpenseScreen';
+import { WantToBuyScreen } from './components/WantToBuyScreen';
+import { AddEditBuyItemScreen } from './components/AddEditBuyItemScreen';
+import { BudgetScreen } from './components/BudgetScreen';
+import { GiveMoneyScreen } from './components/GiveMoneyScreen';
+import { SettingsScreen } from './components/SettingsScreen';
+import { CustomizationScreen } from './components/CustomizationScreen';
+import { ManageUsersScreen } from './components/ManageUsersScreen';
+import { PermissionsScreen } from './components/PermissionsScreen';
+import { NotificationsScreen } from './components/NotificationsScreen';
+import { Loader2 } from 'lucide-react';
+
+const CombinedAppContent: React.FC = () => {
+  // App Content Force Save
+  const { currentScreen, loading } = useAppState();
+
+  if (loading) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center bg-white p-6">
+        <div className="w-12 h-12 rounded-full border-4 border-transparent border-t-indigo-500 border-r-teal-500 border-b-green-500 animate-spin" />
+        <span className="text-sm text-slate-600 font-semibold mt-4">Syncing data...</span>
+      </div>
+    );
+  }
+
+  // Routing manager based on current screen ID
+  switch (currentScreen) {
+    case 'login':
+      return <LoginScreen />;
+    case 'register':
+      return <RegisterScreen />;
+    case 'choose-option':
+      return <ChooseOptionScreen />;
+    case 'select-month':
+      return <SelectMonthScreen />;
+    case 'expense-list':
+      return <ExpenseListScreen />;
+    case 'add-expense':
+      return <AddEditExpenseScreen />;
+    case 'want-to-buy':
+      return <WantToBuyScreen />;
+    case 'add-buy-item':
+      return <AddEditBuyItemScreen />;
+    case 'budget-set':
+      return <BudgetScreen />;
+    case 'give-money':
+      return <GiveMoneyScreen />;
+    case 'settings':
+      return <SettingsScreen />;
+    case 'customization':
+      return <CustomizationScreen />;
+    case 'manage-users':
+      return <ManageUsersScreen />;
+    case 'notifications':
+      return <NotificationsScreen />;
+    case 'permissions-set':
+      return <PermissionsScreen />;
+    default:
+      return <LoginScreen />;
+  }
+};
+
+export default function App() {
+  return (
+    <StateProvider>
+      <MobileFrame>
+        <CombinedAppContent />
+      </MobileFrame>
+    </StateProvider>
+  );
+}
+</file>
+
+<file path="src/lib/firebase.ts">
+import { initializeApp, getApp, getApps } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, doc, collection, setDoc, getDoc, onSnapshot, deleteDoc, getDocs } from 'firebase/firestore';
+import aiStudioConfig from '../../firebase-applet-config.json';
+
+const isAiStudioPreview = typeof window !== 'undefined' && 
+  (window.location.hostname.includes('aistudio.google') || window.location.hostname.includes('web-applet'));
+
+const firebaseConfig = !isAiStudioPreview 
+  ? {
+      apiKey: "AIzaSyCGcQCkoJkEtKxIzQz8BV_eXudtkWpDJdw",
+      authDomain: "family-expense-manager-ac9ef.firebaseapp.com",
+      projectId: "family-expense-manager-ac9ef",
+      storageBucket: "family-expense-manager-ac9ef.firebasestorage.app",
+      messagingSenderId: "237145522695",
+      appId: "1:237145522695:web:1f18a77db6f8eb18caa0a2",
+      measurementId: "G-K0KK77TL5M"
+    }
+  : {
+      apiKey: aiStudioConfig.apiKey,
+      authDomain: aiStudioConfig.authDomain,
+      projectId: aiStudioConfig.projectId,
+      storageBucket: aiStudioConfig.storageBucket,
+      messagingSenderId: aiStudioConfig.messagingSenderId,
+      appId: aiStudioConfig.appId,
+      measurementId: aiStudioConfig.measurementId
+    };
+
+const firestoreDatabaseId = !isAiStudioPreview ? undefined : aiStudioConfig.firestoreDatabaseId;
+
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+
+export const auth = getAuth(app);
+export const db = firestoreDatabaseId ? getFirestore(app, firestoreDatabaseId) : getFirestore(app);
+
+if (import.meta.env.DEV) {
+  console.log(`[Firebase Active] Project: "${firebaseConfig.projectId}" | DB: "${firestoreDatabaseId || '(default)'}"`);
+}
+
+/**
+ * Defensive Data Utility: Recursively removes `undefined` properties or converts them to `null`
+ */
+const sanitizePayload = (obj: any): any => {
+  if (obj === undefined) return null;
+  if (obj === null || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(sanitizePayload);
+
+  return Object.keys(obj).reduce((acc: any, key) => {
+    const val = obj[key];
+    if (val !== undefined) {
+      acc[key] = sanitizePayload(val);
+    }
+    return acc;
+  }, {});
+};
+
+export class SmartDBService {
+  private static useFallback = false;
+  private static fallbackData: Record<string, any> = JSON.parse(localStorage.getItem('family_expenses_fallback_db') || '{}');
+
+  private static saveFallback() {
+    localStorage.setItem('family_expenses_fallback_db', JSON.stringify(this.fallbackData));
+  }
+
+  // Only enable fallback if we are sure we are offline/unauthorized
+  static enableFallbackMode(reason: string) {
+    if (!this.useFallback) {
+      console.warn('Switching to local-first fallback due to:', reason);
+      this.useFallback = true;
+    }
+  }
+
+  static isFallbackActive() {
+    return this.useFallback;
+  }
+
+  static async set(path: string, data: any): Promise<void> {
+    if (this.useFallback) {
+      this.updateFallbackData(path, data);
+      return;
+    }
+
+    try {
+      const parts = path.split('/');
+      if (parts.length === 1) {
+        if (!data) {
+          const snapshot = await getDocs(collection(db, path));
+          for (const d of snapshot.docs) await deleteDoc(d.ref);
+        }
+      } else {
+        const docRef = doc(db, parts[0], parts.slice(1).join('/'));
+        if (data === null || data === undefined) {
+          await deleteDoc(docRef);
+        } else {
+          await setDoc(docRef, sanitizePayload(data));
+        }
+      }
+    } catch (err: any) {
+      console.error(`Firebase Set error at: ${path}`, err);
+      if (this.isNetworkError(err)) this.enableFallbackMode(err.message);
+      this.updateFallbackData(path, data);
+    }
+  }
+
+  static async push(path: string, data: any): Promise<string> {
+    if (this.useFallback) {
+      const newId = `id_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+      this.updateFallbackData(path, { ...data, id: newId }, true);
+      return newId;
+    }
+
+    try {
+      const newRef = doc(collection(db, path));
+      await setDoc(newRef, sanitizePayload({ ...data, id: newRef.id }));
+      return newRef.id;
+    } catch (err: any) {
+      console.error(`Firebase Push error at: ${path}`, err);
+      if (this.isNetworkError(err)) this.enableFallbackMode(err.message);
+      const newId = `id_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+      this.updateFallbackData(path, { ...data, id: newId }, true);
+      return newId;
+    }
+  }
+
+  private static listeners: Record<string, Array<(data: any) => void>> = {};
+
+  private static triggerListeners(path: string, data: any) {
+    if (this.listeners[path]) this.listeners[path].forEach(cb => cb(data));
+  }
+
+  static onValue(path: string, callback: (data: any) => void): () => void {
+    if (this.useFallback) {
+      callback(this.fallbackData[path] || null);
+      if (!this.listeners[path]) this.listeners[path] = [];
+      this.listeners[path].push(callback);
+      return () => { this.listeners[path] = this.listeners[path].filter(cb => cb !== callback); };
+    }
+
+    const parts = path.split('/');
+    const isCollection = parts.length === 1;
+    const ref = isCollection ? collection(db, path) : doc(db, parts[0], parts.slice(1).join('/'));
+
+    const unsubscribe = onSnapshot(ref as any, (snapshot) => {
+      if (isCollection) {
+        const obj: any = {};
+        snapshot.forEach((d: any) => { obj[d.id] = d.data(); });
+        callback(obj);
+      } else {
+        callback((snapshot as any).exists() ? (snapshot as any).data() : null);
+      }
+    }, (err) => {
+      console.error(`Firebase onSnapshot error: ${path}`, err);
+      if (this.isNetworkError(err)) {
+        this.enableFallbackMode(err.message);
+        callback(this.fallbackData[path] || null);
+      }
+    });
+
+    return unsubscribe;
+  }
+
+  static async remove(path: string): Promise<void> {
+    if (this.useFallback) {
+      this.removeFromFallback(path);
+      return;
+    }
+
+    try {
+      const parts = path.split('/');
+      if (parts.length === 1) {
+        const snapshot = await getDocs(collection(db, path));
+        for (const d of snapshot.docs) await deleteDoc(d.ref);
+      } else {
+        await deleteDoc(doc(db, parts[0], parts.slice(1).join('/')));
+      }
+    } catch (err: any) {
+      console.error(`Firebase Remove error at: ${path}`, err);
+      if (this.isNetworkError(err)) this.enableFallbackMode(err.message);
+      this.removeFromFallback(path);
+    }
+  }
+
+  static async get(path: string): Promise<any> {
+    if (this.useFallback) {
+      return this.getFromFallback(path);
+    }
+
+    try {
+      const parts = path.split('/');
+      if (parts.length === 1) {
+        const snapshot = await getDocs(collection(db, path));
+        const obj: any = {};
+        snapshot.forEach((d: any) => { obj[d.id] = d.data(); });
+        return obj;
+      } else {
+        const docRef = doc(db, parts[0], parts.slice(1).join('/'));
+        const snapshot = await getDoc(docRef);
+        return snapshot.exists() ? snapshot.data() : null;
+      }
+    } catch (err: any) {
+      console.error(`Firebase Get error on: ${path}`, err);
+      if (this.isNetworkError(err)) this.enableFallbackMode(err.message);
+      return this.getFromFallback(path);
+    }
+  }
+
+  // --- Helper Methods ---
+
+  private static isNetworkError(err: any): boolean {
+    const msg = err.message?.toLowerCase() || '';
+    return msg.includes('offline') || msg.includes('unavailable') || msg.includes('network') || msg.includes('permission');
+  }
+
+  private static updateFallbackData(path: string, data: any, isPush = false) {
+    const parts = path.split('/');
+    let current = this.fallbackData;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (!current[parts[i]]) current[parts[i]] = {};
+      current = current[parts[i]];
+    }
+    
+    if (isPush) {
+       if (!current[parts[parts.length-1]]) current[parts[parts.length-1]] = {};
+       current[parts[parts.length-1]][data.id] = data;
+    } else {
+       current[parts[parts.length - 1]] = data;
+    }
+    this.saveFallback();
+    this.triggerListeners(parts[0], this.fallbackData[parts[0]]);
+  }
+
+  private static removeFromFallback(path: string) {
+    const parts = path.split('/');
+    let current = this.fallbackData;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (!current[parts[i]]) return;
+      current = current[parts[i]];
+    }
+    delete current[parts[parts.length - 1]];
+    this.saveFallback();
+    this.triggerListeners(parts[0], this.fallbackData[parts[0]]);
+  }
+
+  private static getFromFallback(path: string) {
+    const parts = path.split('/');
+    let current = this.fallbackData;
+    for (const p of parts) {
+      if (!current) return null;
+      current = current[p];
+    }
+    return current;
+  }
+}
+</file>
+
+<file path="src/index.css">
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Base Body Styles */
+body {
+  margin: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* overflow: hidden; */
+  font-family: var(--font-sans);
+  background-color: #0f172a !important;
+  background-image: linear-gradient(to bottom right, #312e81, #0f172a, #115e59) !important;
+}
+
+/* Ensure child views in the smartphone frame match glassmorphism aesthetics */
+#phone_view_container {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(40px) !important;
+  -webkit-backdrop-filter: blur(40px) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Override screen contents so they are fully translucent/transparent */
+#phone_view_container div.bg-white,
+#phone_view_container .bg-white {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+/* Translucent input & choice item panels */
+#phone_view_container .bg-gray-50,
+#phone_view_container .bg-gray-100,
+#phone_view_container .bg-gray-150,
+#phone_view_container .bg-slate-50,
+#phone_view_container .bg-slate-100,
+#phone_view_container .bg-indigo-50\/25,
+#phone_view_container .bg-indigo-50,
+#phone_view_container .bg-green-50,
+#phone_view_container .bg-green-50\/50,
+#phone_view_container .bg-teal-500\/20,
+#phone_view_container .bg-slate-100\/80,
+#phone_view_container .bg-[#f8fafc],
+#phone_view_container .bg-[#fafafa],
+#phone_view_container .bg-[#fffbeb] {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* Status Bar & Header transparent backdrop */
+#phone_view_container .bg-slate-950,
+#phone_view_container .bg-slate-900,
+#phone_view_container header {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: blur(25px) !important;
+  -webkit-backdrop-filter: blur(25px) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Typography styles inside viewport to support Ice White colors of Frosted glass theme */
+#phone_view_container h1,
+#phone_view_container h2,
+#phone_view_container h3,
+#phone_view_container h4,
+#phone_view_container label,
+#phone_view_container span,
+#phone_view_container p {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+#phone_view_container .text-gray-950,
+#phone_view_container .text-gray-900,
+#phone_view_container .text-gray-800,
+#phone_view_container .text-gray-750,
+#phone_view_container .text-slate-800,
+#phone_view_container .text-indigo-950,
+#phone_view_container .text-indigo-900 {
+  color: rgba(255, 255, 255, 0.98) !important;
+}
+
+#phone_view_container .text-gray-700,
+#phone_view_container .text-gray-650,
+#phone_view_container .text-gray-600,
+#phone_view_container .text-slate-600,
+#phone_view_container .text-indigo-700 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+#phone_view_container .text-gray-500,
+#phone_view_container .text-gray-400,
+#phone_view_container .text-slate-500,
+#phone_view_container .text-indigo-500 {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+#phone_view_container .hover\:bg-gray-50:hover,
+#phone_view_container .hover\:bg-gray-100:hover,
+#phone_view_container .hover\:bg-slate-50:hover {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Inputs and Forms fields */
+#phone_view_container input,
+#phone_view_container select,
+#phone_view_container textarea {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+#phone_view_container input::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+#phone_view_container select option {
+  background-color: #1e1b4b !important;
+  color: #ffffff !important;
+}
+
+/* Accent Colors - Soft Teal from Glass design instead of hard values */
+#phone_view_container .text-green-500,
+#phone_view_container .text-emerald-500,
+#phone_view_container .text-green-600,
+#phone_view_container .text-indigo-650,
+#phone_view_container .text-indigo-600,
+#phone_view_container .text-blue-600 {
+  color: #2dd4bf !important; /* Premium Teal */
+}
+
+#phone_view_container .bg-green-500,
+#phone_view_container .bg-emerald-500,
+#phone_view_container .bg-green-600,
+#phone_view_container .bg-indigo-600,
+#phone_view_container .bg-indigo-700,
+#phone_view_container .bg-blue-600 {
+  background-color: #0d9488 !important; /* Soft Teal background */
+  color: #ffffff !important;
+}
+
+#phone_view_container .bg-green-50,
+#phone_view_container .bg-green-50\/50,
+#phone_view_container .bg-teal-500\/20,
+#phone_view_container .bg-emerald-50,
+#phone_view_container .bg-indigo-50,
+#phone_view_container .bg-blue-50 {
+  background-color: rgba(45, 212, 191, 0.1) !important;
+  border-color: rgba(45, 212, 191, 0.18) !important;
+}
+
+#phone_view_container .border-green-100,
+#phone_view_container .border-indigo-150,
+#phone_view_container .border-indigo-100,
+#phone_view_container .border-blue-100,
+#phone_view_container .border-gray-150,
+#phone_view_container .border-gray-200 {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Modifies default custom buttons style to have nice frosted focus border */
+#phone_view_container button {
+  transition: all 0.2s ease-in-out;
+}
+
+#phone_view_container button:active {
+  transform: scale(0.97);
+}
+
+/* Custom indicator or notice boxes */
+#phone_view_container .bg-green-50\/50,
+#phone_view_container .text-green-800 {
+  background-color: rgba(45, 212, 191, 0.08) !important;
+  color: #2dd4bf !important;
+}
+</file>
+
+<file path="src/components/ExpenseListScreen.tsx">
+import React, { useState } from 'react';
+import { useAppState } from '../context/StateContext';
+import { 
+  ArrowLeft, 
+  Plus, 
+  Edit3, 
+  Trash2,
+  TrendingUp, 
+  Bell, 
+  DollarSign, 
+  User, 
+  ChevronRight, 
+  Wallet,
+  CheckCircle,
+  AlertTriangle,
+  Calendar,
+  HandCoins
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+
+export const ExpenseListScreen: React.FC = () => {
+  const { 
+    expenses, 
+    currentUser, 
+    activeMonth, 
+    budgets, 
+    giveMoneyTransactions,
+    notifications, 
+    goBack, 
+    navigate, 
+    customization,
+    firebaseMode,
+    deleteExpense,
+    formatCurrency
+  } = useAppState();
+
+  const [notifExpanded, setNotifExpanded] = useState(false);
+  const [expandedExpenseId, setExpandedExpenseId] = useState<string | null>(null);
+
+  const toggleExpand = (id: string) => {
+      setExpandedExpenseId((prev) => (prev === id ? null : id));
+  };
+
+  // Filter expenses based on active month (YYYY-MM)
+  const monthExpenses = expenses.filter(e => e.month === activeMonth);
+
+  // Roles & View Filter: "Each user sees only their own expenses. Owner sees all users' expenses and totals."
+  const isOwner = currentUser?.role === 'owner';
+  const hasTotalSpendingAccess = isOwner || currentUser?.permissions?.seeTotalSpending;
+
+  let displayExpenses = isOwner 
+    ? monthExpenses 
+    : monthExpenses.filter(e => e.userId === currentUser?.uid);
+
+  displayExpenses = [...displayExpenses].sort((a, b) => {
+    const timeA = a.createdAt || new Date(a.date).getTime();
+    const timeB = b.createdAt || new Date(b.date).getTime();
+    return timeB - timeA;
+  });
+
+  // Calculations
+  const totalAmount = displayExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const totalCount = displayExpenses.length;
+
+  // Monthly Budget pacing
+  // For owner: total month budget. For non-owner: sum of given money in that month.
+  let currentBudget = 0;
+  if (isOwner) {
+    const currentBudgetObj = budgets.find(b => b.month === activeMonth);
+    currentBudget = currentBudgetObj ? currentBudgetObj.amount : 0;
+  } else {
+    // Non-owner: Calculate sum of given money for this month
+     currentBudget = giveMoneyTransactions
+      .filter(tx => tx.userId === currentUser?.uid && tx.date.startsWith(activeMonth))
+      .reduce((sum, tx) => sum + tx.amount, 0);
+  }
+
+  const percentSpent = currentBudget > 0 ? Math.min((totalAmount / currentBudget) * 100, 100) : 0;
+
+  // Human readable month name
+  const monthDisplayNames: Record<string, string> = {
+    '2026-04': 'April 2026',
+    '2026-05': 'May 2026',
+    '2026-06': 'June 2026',
+    '2026-07': 'July 2026',
+    '2026-08': 'August 2026',
+  };
+  const readableMonth = monthDisplayNames[activeMonth] || activeMonth;
+
+  // Notification for Owner only (Step #8)
+  const ownerNotifications = notifications.filter(n => n.title.includes('Updated') || n.title.includes('Expense'));
+
+  const accentColor = isOwner ? customization.primaryColor : '#22c55e';
+  const deleteBtnColor = isOwner ? customization.delBtnColor : '#ef4444';
+  const customBtnColor = isOwner ? customization.btnColor : '#000000';
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="flex-1 flex flex-col p-5 bg-white relative"
+    >
+      {/* Navigation Header */}
+      <div className="flex items-center justify-between mt-2 mb-5">
+        <button 
+          onClick={goBack} 
+          className="py-2.5 px-5 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide hover:bg-slate-850 active:scale-95 transition flex items-center shadow-lg hover:shadow-xl"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+          Go Back
+        </button>
+        <span className="flex items-center gap-1.5 text-sm font-extrabold text-teal-700 bg-teal-50 px-4 py-1.5 rounded-full border-2 border-teal-200 shadow-md">
+          <Calendar className="w-4 h-4 stroke-[2.5]" />
+          {readableMonth}
+        </span>
+        {/* Quick notification bell for Owner (Step 8 Indicator) */}
+        {isOwner && (
+          <div className="relative">
+            <button 
+              onClick={() => setNotifExpanded(!notifExpanded)}
+              className="p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-600 transition flex items-center justify-center border border-amber-100"
+            >
+              <Bell className="w-4 h-4" />
+              {ownerNotifications.length > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold rounded-full w-4.5 h-4.5 text-[9px] flex items-center justify-center animate-bounce">
+                  {ownerNotifications.length}
+                </span>
+              )}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* STEP 8: VIEW OWNER NOTIFICATIONS IN-APP PANEL */}
+      {isOwner && notifExpanded && ownerNotifications.length > 0 && (
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 p-4 border border-amber-100 bg-gradient-to-br from-amber-50/70 to-orange-50/40 rounded-2xl relative shadow-sm"
+        >
+          <div className="flex items-center gap-1.5 text-xs text-amber-700 font-bold mb-2">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+            🔔 Owner Notification (In-App)
+          </div>
+          <div className="divide-y divide-amber-100 max-h-[220px] overflow-y-auto">
+            {ownerNotifications.map((notif) => (
+              <div key={notif.id} className="py-2.5 text-xs first:pt-0 last:pb-0">
+                <span className="font-semibold text-amber-800 uppercase text-[9px] bg-amber-100/60 px-1.5 py-0.5 rounded tracking-wider">
+                  Expense Updated
+                </span>
+                <p className="text-gray-700 mt-1.5 leading-relaxed font-medium">
+                  {notif.message}
+                </p>
+                <span className="block text-[10px] text-gray-400 mt-1">
+                  {new Date(notif.timestamp).toLocaleString('en-IN', {
+                    day: '2-digit', month: 'short', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit', hour12: true
+                  })}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 flex gap-2">
+            <button 
+              onClick={() => alert('The latest update logs reflect detailed category edits directly in the records list below.')}
+              className="flex-1 py-1 px-3 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-semibold text-[11px] rounded-xl transition"
+            >
+              View Details
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Header totals card */}
+      {hasTotalSpendingAccess ? (
+        <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4 shadow-xs relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-green-500/5 rounded-full -mr-6 -mt-6" />
+          <span className="text-xs font-extrabold text-black uppercase tracking-wider block">
+            {isOwner ? 'Group Expenditure' : 'Your Managed Budget'}
+          </span>
+          <div className="flex justify-between items-end mt-2">
+            <div>
+              <span className="text-2xl font-bold text-slate-900 tracking-tight">
+                {formatCurrency(totalAmount)}
+              </span>
+              <span className="text-sm text-slate-700 font-medium block mt-1">
+                Total Expenses • <strong className="text-slate-900">{totalCount} Items</strong>
+                {currentBudget > 0 && (
+                  <> • <strong className="text-teal-600 text-xs ml-1">Balance: {formatCurrency(currentBudget - totalAmount)}</strong></>
+                )}
+              </span>
+            </div>
+            
+            {/* Quick set budget action for owner/allowed user */}
+            {(isOwner || currentUser?.permissions?.addBudget) && (
+              <button 
+                id="budget_setup_link"
+                onClick={() => navigate('budget-set')}
+                className="text-xs font-semibold hover:underline flex items-center gap-1"
+                style={{ color: accentColor }}
+              >
+                <Wallet className="w-3.5 h-3.5" />
+                Set Budget
+              </button>
+            )}
+          </div>
+
+          {/* Budget Progress bar */}
+          {currentBudget > 0 && (
+            <div className="mt-4 pt-3 border-t border-slate-100">
+              <div className="flex justify-between text-[11px] text-slate-400 font-medium mb-1">
+                <span>Budget Spent: {percentSpent.toFixed(0)}%</span>
+                <span>Limit: {formatCurrency(currentBudget)}</span>
+              </div>
+              <div className="w-full h-2 bg-slate-200/60 rounded-full overflow-hidden">
+                <div 
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{ 
+                    width: `${percentSpent}%`,
+                    backgroundColor: percentSpent > 90 ? deleteBtnColor : accentColor 
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        // For standard non-privileged user who can't see total spending
+        <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4">
+          <span className="text-xs font-extrabold text-black uppercase tracking-wider block">
+            Your Personal Ledger
+          </span>
+          <div className="mt-1.5">
+            <span className="text-2xl font-bold text-slate-900">
+              {formatCurrency(totalAmount)}
+            </span>
+            <span className="text-sm text-slate-700 font-medium block mt-1">
+              Own Expenses • <strong className="text-slate-900">{totalCount} Items</strong>
+              {currentBudget > 0 && (
+                <> • <strong className="text-teal-600 text-xs ml-1">Balance: {formatCurrency(currentBudget - totalAmount)}</strong></>
+              )}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Action buttons (Add Expense & Give Money) */}
+      <div className="flex justify-between items-center mb-4 mt-2">
+        <h3 className="font-extrabold text-gray-900 text-lg tracking-tight">Expense List</h3>
+        <div className="flex gap-2">
+          {(isOwner || currentUser?.permissions?.addGiveMoney) && (
+            <button
+              onClick={() => navigate('give-money')}
+              className="flex items-center gap-1.5 px-3 py-2.5 bg-white border border-gray-200 text-gray-800 font-bold text-sm rounded-xl transition shadow-xs hover:shadow-sm active:scale-[0.97]"
+            >
+              <HandCoins className="w-5 h-5 stroke-[2.5]" />
+              Give Money
+            </button>
+          )}
+          <button 
+            id="add_expense_btn"
+            onClick={() => navigate('add-expense')}
+            className="flex items-center gap-1.5 px-3 py-2.5 bg-black text-white font-bold text-sm rounded-xl transition shadow-md hover:shadow-lg active:scale-[0.97]"
+          >
+            <Plus className="w-5 h-5 stroke-[2.5]" />
+            Add Expense
+          </button>
+        </div>
+      </div>
+
+      {/* Expenses items array list (Step #5 & #6 edit icons) */}
+      <div className="flex-1 overflow-y-auto space-y-2.5 max-h-[460px] pr-1">
+        {displayExpenses.length === 0 ? (
+          <div className="border border-dashed border-gray-100 rounded-2xl py-12 text-center">
+            <p className="text-gray-400 text-xs">No expenses logged for {readableMonth} yet.</p>
+            <button 
+              onClick={() => navigate('add-expense')}
+              className="mt-2 text-xs font-semibold underline"
+              style={{ color: accentColor }}
+            >
+              Add First Record
+            </button>
+          </div>
+        ) : (
+          displayExpenses.map((exp) => (
+            <div 
+              key={exp.id} 
+              className="flex flex-col p-3 bg-white border border-gray-100 hover:border-gray-200 rounded-2xl shadow-xs transition cursor-pointer"
+              onClick={() => toggleExpand(exp.id)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div 
+                    className="w-10 h-10 rounded-xl flex flex-col items-center justify-center text-xs border"
+                    style={{ 
+                      borderColor: `${accentColor}1A`, 
+                      backgroundColor: `${accentColor}08`, 
+                      color: accentColor 
+                    }}
+                  >
+                    <span className="font-bold text-sm">
+                      {new Date(exp.date).getDate()}
+                    </span>
+                    <span className="text-[8px] uppercase font-bold text-gray-400">
+                      {new Date(exp.date).toLocaleString('default', { month: 'short' })}
+                    </span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-[13px]">{exp.title}</h4>
+                    <p className="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
+                      <User className="w-2.5 h-2.5" />
+                      Added by {exp.userName || exp.userEmail.split('@')[0]}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                  <div className="text-right">
+                    <span className="text-sm font-bold text-gray-900 block">
+                      {formatCurrency(exp.amount, exp.userId)}
+                    </span>
+                    {exp.details && (
+                      <span className="text-[9px] text-gray-400 block max-w-[80px] truncate">
+                        {exp.details}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Edit Icon Button */}
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); navigate('add-expense', { editId: exp.id }); }}
+                    className="p-1 px-1.5 rounded-lg border border-gray-100 hover:bg-gray-50 text-gray-500 hover:text-gray-900 transition flex items-center justify-center"
+                    title="Edit record"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                  </button>
+
+                  {/* Delete Icon Button */}
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm(`Are you sure you want to delete this expense of ${formatCurrency(exp.amount, exp.userId)}?`)) {
+                        deleteExpense(exp.id);
+                      }
+                    }}
+                    className="p-1 px-1.5 rounded-lg border border-red-50 hover:bg-red-50 text-red-500 transition flex items-center justify-center"
+                    style={{ color: deleteBtnColor }}
+                    title="Delete record"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Expanded details section */}
+              {expandedExpenseId === exp.id && (
+                <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-600 space-y-2 animate-in fade-in transition">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Title</span>
+                    <span className="font-semibold text-gray-900">{exp.title}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Amount</span>
+                    <span className="font-semibold text-gray-900">{formatCurrency(exp.amount, exp.userId)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Date</span>
+                    <span className="font-semibold text-gray-900">{new Date(exp.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                  </div>
+                  {exp.createdAt && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Time</span>
+                      <span className="font-semibold text-gray-900">{new Date(exp.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Added By</span>
+                    <span className="font-semibold text-gray-900">{exp.userName || exp.userEmail.split('@')[0]}</span>
+                  </div>
+                  {exp.details && (
+                    <div className="flex flex-col gap-1 mt-2 pt-2 border-t border-gray-50">
+                      <span className="text-gray-400">Details / Notes</span>
+                      <span className="text-teal-600 bg-transparent py-1 leading-relaxed">{exp.details}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Visual Role helper */}
+      <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-400 font-medium">
+        <span>Logged in: <strong className="text-gray-600">{currentUser?.email}</strong></span>
+        <span>Role: <strong className="text-gray-600 capitalize">{currentUser?.role}</strong></span>
+      </div>
+    </motion.div>
+  );
+};
+</file>
+
+<file path="src/context/StateContext.tsx">
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { 
+  UserProfile, 
+  Expense, 
+  WantToBuyItem, 
+  GiveMoneyTransaction, 
+  MonthlyBudget, 
+  AppCustomization, 
+  AppNotification,
+  UserPermissions
+} from '../types';
+import { SmartDBService, auth } from '../lib/firebase';
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut, updateProfile } from 'firebase/auth';
+
+interface StateContextType {
+  currentUser: UserProfile | null;
+  users: UserProfile[];
+  expenses: Expense[];
+  wantToBuyItems: WantToBuyItem[];
+  giveMoneyTransactions: GiveMoneyTransaction[];
+  budgets: MonthlyBudget[];
+  notifications: AppNotification[];
+  customization: AppCustomization;
+  loading: boolean;
+  activeMonth: string; // YYYY-MM
+  currentScreen: string; // Screen ID
+  currentScreenParams: any; // navigation params
+  activeFlow: 'expense' | 'buy' | null; // Selected flow option
+  firebaseMode: 'firebase' | 'local';
+  
+  // Auth methods
+  login: (email: string, pass: string) => Promise<void>;
+  register: (fullName: string, email: string, pass: string) => Promise<void>;
+  logout: () => Promise<void>;
+  
+  // Navigation
+  navigate: (screen: string, params?: any) => void;
+  goBack: () => void;
+  setActiveMonth: (month: string) => void;
+  setActiveFlow: (flow: 'expense' | 'buy' | null) => void;
+
+  // DB Methods
+  addExpense: (expense: Omit<Expense, 'id' | 'userId' | 'userEmail' | 'userName' | 'month'>) => Promise<void>;
+  editExpense: (id: string, expense: Partial<Expense>) => Promise<void>;
+  deleteExpense: (id: string) => Promise<void>;
+  addWantToBuyItem: (item: { name: string; quantity: number }) => Promise<void>;
+  editWantToBuyItem: (id: string, item: { name: string; quantity: number }) => Promise<void>;
+  toggleWantToBuyItem: (id: string) => Promise<void>;
+  deleteWantToBuyItem: (id: string) => Promise<void>;
+  setMonthlyBudget: (month: string, amount: number) => Promise<void>;
+  addGiveMoneyTransaction: (userId: string, amount: number, purpose: string, date: string) => Promise<void>;
+  updateUserPermissions: (userId: string, permissions: UserPermissions) => Promise<void>;
+  removeUserAccess: (userId: string) => Promise<void>;
+  updateCustomization: (custom: Partial<AppCustomization>) => Promise<void>;
+  addNotification: (title: string, message: string) => Promise<void>;
+  clearNotifications: () => Promise<void>;
+  
+  // Currency helpers
+  getCurrencySymbol: (uid?: string) => string;
+  formatCurrency: (amount: number, uid?: string) => string;
+  clearAllDummyData: () => Promise<void>;
+}
+
+const defaultCustomization: AppCustomization = {
+  bgColor: '#ffffff',
+  textColor: '#000000',
+  primaryColor: '#2dd4bf', // Teal accent is beautiful
+  btnColor: '#ffffff',
+  chkColor: '#2dd4bf',
+  delBtnColor: '#ef4444', // red-500
+  currency: 'PKR',
+  currencyScope: 'global',
+  userCurrencies: {},
+};
+
+const defaultPermissions: UserPermissions = {
+  addBudget: false,
+  seeTotalSpending: true,
+  addGiveMoney: false,
+  viewAllTransactions: false,
+  manageWantToBuy: true,
+  appCustomization: false,
+  manageUsers: false,
+  viewNotifications: false,
+};
+
+const StateContext = createContext<StateContextType | undefined>(undefined);
+
+export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
+    const saved = sessionStorage.getItem('currentUser');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [wantToBuyItems, setWantToBuyItems] = useState<WantToBuyItem[]>([]);
+  const [giveMoneyTransactions, setGiveMoneyTransactions] = useState<GiveMoneyTransaction[]>([]);
+  const [budgets, setBudgets] = useState<MonthlyBudget[]>([]);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [customization, setCustomization] = useState<AppCustomization>(defaultCustomization);
+  const [loading, setLoading] = useState(true);
+  const [firebaseMode, setFirebaseMode] = useState<'firebase' | 'local'>('firebase');
+  
+  // Navigation stack
+  const [navigationHistory, setNavigationHistory] = useState<Array<{ screen: string; params: any }>>(() => {
+    const saved = sessionStorage.getItem('navigationHistory');
+    return saved ? JSON.parse(saved) : [{ screen: 'login', params: {} }];
+  });
+  const currentScreenState = navigationHistory[navigationHistory.length - 1] || { screen: 'login', params: {} };
+  const currentScreen = currentScreenState.screen;
+  const currentScreenParams = currentScreenState.params;
+
+  // Selected state
+  const [activeMonth, setActiveMonth] = useState<string>(() => {
+    return sessionStorage.getItem('activeMonth') || '2026-06'; // June 2026 as default from flow
+  });
+  const [activeFlow, setActiveFlow] = useState<'expense' | 'buy' | null>(() => {
+    const saved = sessionStorage.getItem('activeFlow');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem('navigationHistory', JSON.stringify(navigationHistory));
+  }, [navigationHistory]);
+
+  useEffect(() => {
+    sessionStorage.setItem('activeMonth', activeMonth);
+  }, [activeMonth]);
+
+  useEffect(() => {
+    if (activeFlow) {
+      sessionStorage.setItem('activeFlow', JSON.stringify(activeFlow));
+    } else {
+      sessionStorage.removeItem('activeFlow');
+    }
+  }, [activeFlow]);
+
+  useEffect(() => {
+    if (currentUser) {
+      sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+    } else {
+      sessionStorage.removeItem('currentUser');
+    }
+  }, [currentUser]);
+
+  // Sync mode based on service fallback
+  useEffect(() => {
+    const checkInterval = setInterval(() => {
+      setFirebaseMode(SmartDBService.isFallbackActive() ? 'local' : 'firebase');
+    }, 1000);
+    return () => clearInterval(checkInterval);
+  }, []);
+
+  // Handle Firebaseauth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        // Fetch original user details from Realtime Database
+        try {
+          const profile = await SmartDBService.get(`users/${firebaseUser.uid}`);
+          if (profile) {
+            // Hotfix: Ensure only munibahmad47@gmail.com is owner
+            const emailLower = (firebaseUser.email || '').toLowerCase();
+            const targetRole = emailLower === 'munibahmad47@gmail.com' ? 'owner' : 'authorized_user';
+            
+            if (profile.role !== targetRole) {
+              profile.role = targetRole;
+              await SmartDBService.set(`users/${firebaseUser.uid}`, profile);
+            }
+
+            setCurrentUser(profile);
+            setNavigationHistory(prev => {
+              const lastScreen = prev[prev.length - 1]?.screen;
+              if (lastScreen === 'login' || lastScreen === 'register') {
+                return [...prev, { screen: 'choose-option', params: {} }];
+              }
+              return prev;
+            });
+          } else {
+            // First time login user profile creation
+            // Check if is first user in system -> make them owner
+            const allUsers = await SmartDBService.get('users') || {};
+            const emailLower = (firebaseUser.email || '').toLowerCase();
+            const isOwner = emailLower === 'munibahmad47@gmail.com';
+            const newProfile: UserProfile = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email || '',
+              fullName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+              role: isOwner ? 'owner' : 'authorized_user',
+              permissions: isOwner ? undefined : defaultPermissions
+            };
+            await SmartDBService.set(`users/${firebaseUser.uid}`, newProfile);
+            setCurrentUser(newProfile);
+            setNavigationHistory(prev => {
+              const lastScreen = prev[prev.length - 1]?.screen;
+              if (lastScreen === 'login' || lastScreen === 'register') {
+                return [...prev, { screen: 'choose-option', params: {} }];
+              }
+              return prev;
+            });
+          }
+        } catch (err) {
+          // Setup local fallback user profiles directly
+          const emailLower = (firebaseUser.email || '').toLowerCase();
+          const targetRole = emailLower === 'munibahmad47@gmail.com' ? 'owner' : 'authorized_user';
+          
+          const localProfile: UserProfile = {
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || 'user@example.com',
+            fullName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+            role: targetRole,
+            permissions: targetRole === 'owner' ? undefined : defaultPermissions
+          };
+          setCurrentUser(localProfile);
+          setNavigationHistory(prev => {
+            const lastScreen = prev[prev.length - 1]?.screen;
+            if (lastScreen === 'login' || lastScreen === 'register') {
+              return [...prev, { screen: 'choose-option', params: {} }];
+            }
+            return prev;
+          });
+        }
+      } else {
+        const savedUser = sessionStorage.getItem('currentUser');
+        if (savedUser) {
+          setCurrentUser(JSON.parse(savedUser));
+          setLoading(false);
+          return;
+        }
+        setCurrentUser(null);
+        setNavigationHistory([{ screen: 'login', params: {} }]);
+      }
+      setLoading(false);
+    }, (error) => {
+      console.warn("Auth state error:", error);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Database listeners - only trigger when user is authenticated
+  useEffect(() => {
+    if (!currentUser) return;
+
+    // 1. Sync User list
+    const unsubUsers = SmartDBService.onValue('users', (data) => {
+      if (data) {
+        const uList: UserProfile[] = Object.values(data);
+        setUsers(uList);
+      } else {
+        setUsers([]);
+      }
+    });
+
+    // 2. Sync Expenses
+    const unsubExpenses = SmartDBService.onValue('expenses', (data) => {
+      if (data) {
+        const eList: Expense[] = Object.keys(data).map(key => ({
+          ...data[key],
+          id: data[key].id || key
+        }));
+        setExpenses(eList);
+      } else {
+        setExpenses([]);
+      }
+    });
+
+    // 3. Sync Want to Buy Items
+    const unsubBuy = SmartDBService.onValue('wantToBuy', (data) => {
+      if (data) {
+        const bList: WantToBuyItem[] = Object.keys(data).map(key => ({
+          ...data[key],
+          id: data[key].id || key
+        }));
+        setWantToBuyItems(bList);
+      } else {
+        setWantToBuyItems([]);
+      }
+    });
+
+    // 4. Sync Special Transactions
+    const unsubTx = SmartDBService.onValue('transactions', (data) => {
+      if (data) {
+        const tList: GiveMoneyTransaction[] = Object.values(data);
+        setGiveMoneyTransactions(tList);
+      } else {
+        setGiveMoneyTransactions([]);
+      }
+    });
+
+    // 5. Sync Budgets
+    const unsubBudgets = SmartDBService.onValue('budgets', (data) => {
+      if (data) {
+        const bList: MonthlyBudget[] = Object.values(data);
+        setBudgets(bList);
+      } else {
+        setBudgets([]);
+      }
+    });
+
+    // 6. Sync Customizations
+    const unsubCustom = SmartDBService.onValue('customization', (data) => {
+      if (data) {
+        setCustomization({ ...defaultCustomization, ...data });
+      } else {
+        setCustomization(defaultCustomization);
+      }
+    });
+
+    // 7. Sync Notifications
+    const unsubNotifications = SmartDBService.onValue('notifications', (data) => {
+      if (data) {
+        const nList: AppNotification[] = Object.values(data);
+        setNotifications(nList.sort((a,b) => b.timestamp - a.timestamp));
+      } else {
+        setNotifications([]);
+      }
+    });
+
+    return () => {
+      unsubUsers();
+      unsubExpenses();
+      unsubBuy();
+      unsubTx();
+      unsubBudgets();
+      unsubCustom();
+      unsubNotifications();
+    };
+  }, [currentUser]);
+
+  // Currency logic implementation
+  const getCurrencySymbol = (uid?: string): string => {
+    if (customization.currencyScope === 'specific' && uid && customization.userCurrencies?.[uid]) {
+      return customization.userCurrencies[uid];
+    }
+    return customization.currency || 'PKR';
+  };
+
+  const formatCurrency = (amount: number, uid?: string): string => {
+    const symbol = getCurrencySymbol(uid || currentUser?.uid);
+    return `${symbol} ${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+  };
+
+  const clearAllDummyData = async () => {
+    await SmartDBService.set('expenses', null);
+    await SmartDBService.set('wantToBuy', null);
+    await SmartDBService.set('transactions', null);
+    await SmartDBService.set('budgets', null);
+    
+    // Also remove seeded demo users but keep the logged-in user profile
+    const allUsers = await SmartDBService.get('users') || {};
+    const filteredUsers: Record<string, any> = {};
+    if (currentUser) {
+      filteredUsers[currentUser.uid] = currentUser;
+    }
+    await SmartDBService.set('users', filteredUsers);
+  };
+
+  // Navigation handlers
+  const navigate = (screen: string, params: any = {}) => {
+    setNavigationHistory(prev => [...prev, { screen, params }]);
+  };
+
+  const goBack = () => {
+    if (navigationHistory.length > 1) {
+      setNavigationHistory(prev => prev.slice(0, prev.length - 1));
+    }
+  };
+
+  // Auth Operations
+  const login = async (email: string, pass: string) => {
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (err: any) {
+      if (err.code !== 'auth/operation-not-allowed') {
+        console.warn("Real Auth failed, using smart browser emulation:", err);
+      }
+      // Fallback auth emulation
+      SmartDBService.enableFallbackMode('auth-emulation');
+      const allRegisteredUsers = await SmartDBService.get('users') || {};
+      let foundUser = Object.values(allRegisteredUsers).find((u: any) => u.email === email) as UserProfile | undefined;
+      
+      if (!foundUser) {
+        // Bootstrap standard owner account for default login
+        if (email.toLowerCase() === 'munibahmad47@gmail.com') {
+          foundUser = {
+            uid: 'u_owner',
+            email: 'munibahmad47@gmail.com',
+            fullName: 'Munib Ahmad',
+            role: 'owner'
+          };
+          await SmartDBService.set('users/u_owner', foundUser);
+        } else {
+          throw new Error(err.message || 'Check credentials.');
+        }
+      }
+      
+      if (foundUser) {
+        const tempEmailLower = (foundUser.email || '').toLowerCase();
+        const targetRole = tempEmailLower === 'munibahmad47@gmail.com' ? 'owner' : 'authorized_user';
+        if (foundUser.role !== targetRole) {
+          foundUser.role = targetRole;
+          await SmartDBService.set(`users/${foundUser.uid}`, foundUser);
+        }
+      }
+      
+      setCurrentUser(foundUser);
+      navigate('choose-option');
+      setLoading(false);
+    }
+  };
+
+  const register = async (fullName: string, email: string, pass: string) => {
+    setLoading(true);
+    try {
+      const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+      await updateProfile(userCred.user, { displayName: fullName });
+      
+      const emailLower = email.toLowerCase();
+      const isOwner = emailLower === 'munibahmad47@gmail.com';
+      const userProfile: UserProfile = {
+        uid: userCred.user.uid,
+        email,
+        fullName,
+        role: isOwner ? 'owner' : 'authorized_user',
+        permissions: isOwner ? undefined : defaultPermissions
+      };
+      await SmartDBService.set(`users/${userCred.user.uid}`, userProfile);
+      setCurrentUser(userProfile);
+    } catch (err: any) {
+      if (err.code !== 'auth/operation-not-allowed') {
+        console.warn("Real Register failed, creating local profile:", err);
+      }
+      SmartDBService.enableFallbackMode('auth-emulation');
+      
+      const userId = `u_${Date.now()}`;
+      const allUsers = await SmartDBService.get('users') || {};
+      const emailLower = email.toLowerCase();
+      const isOwner = emailLower === 'munibahmad47@gmail.com';
+      
+      const newProfile: UserProfile = {
+        uid: userId,
+        email,
+        fullName,
+        role: isOwner ? 'owner' : 'authorized_user',
+        permissions: isOwner ? undefined : defaultPermissions
+      };
+      
+      await SmartDBService.set(`users/${userId}`, newProfile);
+      setCurrentUser(newProfile);
+      navigate('choose-option');
+      setLoading(false);
+    }
+  };
+
+  const logout = async () => {
+    setLoading(true);
+    try {
+      await firebaseSignOut(auth);
+    } catch (err) {
+      console.warn("Sign Out Error:", err);
+    }
+    setCurrentUser(null);
+    setNavigationHistory([{ screen: 'login', params: {} }]);
+    setLoading(false);
+  };
+
+  // Database additions
+  const addExpense = async (expenseData: any) => {
+    if (!currentUser) return;
+    const finalData = {
+      ...expenseData,
+      userId: currentUser.uid,
+      userEmail: currentUser.email,
+      userName: currentUser.fullName,
+      month: activeMonth,
+      createdAt: Date.now()
+    };
+
+    const expId = await SmartDBService.push('expenses', finalData);
+    
+    // Trigger notification
+    const formattedAmount = formatCurrency(expenseData.amount, currentUser.uid);
+    await addNotification(
+      'Expense Added',
+      `${currentUser.fullName} added expense "${expenseData.title}" (${activeMonth}): ${formattedAmount}`
+    );
+  };
+
+  const editExpense = async (id: string, expenseData: any) => {
+    if (!currentUser) return;
+    const existingExp = expenses.find(e => e.id === id);
+    if (!existingExp) return;
+
+    const updated = {
+      ...existingExp,
+      ...expenseData
+    };
+
+    await SmartDBService.set(`expenses/${id}`, updated);
+
+    // Trigger Notification for updates (view 8 in flow)
+    const formattedOld = formatCurrency(existingExp.amount, existingExp.userId);
+    const formattedNew = formatCurrency(expenseData.amount, existingExp.userId);
+    await addNotification(
+      'Expense Updated',
+      `${currentUser.fullName} changed in ${existingExp.title}, Change the price from ${formattedOld} to ${formattedNew}`
+    );
+  };
+
+  const deleteExpense = async (id: string) => {
+    if (!currentUser) return;
+    const existingExp = expenses.find(e => e.id === id);
+    if (!existingExp) return;
+
+    await SmartDBService.remove(`expenses/${id}`);
+
+    // Trigger Notification for deletes so the owner gets notified
+    const formattedAmount = formatCurrency(existingExp.amount, existingExp.userId);
+    await addNotification(
+      'Expense Deleted',
+      `${currentUser.fullName} has deleted the expense "${existingExp.title}" (${activeMonth}). Amount: ${formattedAmount}`
+    );
+  };
+
+  const addWantToBuyItem = async (item: { name: string; quantity: number }) => {
+    if (!currentUser) return;
+    const newItem = {
+      name: item.name,
+      quantity: item.quantity,
+      checked: false,
+      userId: currentUser.uid,
+      userName: currentUser.fullName,
+      month: activeMonth
+    };
+    await SmartDBService.push('wantToBuy', newItem);
+  };
+
+  const editWantToBuyItem = async (id: string, item: { name: string; quantity: number }) => {
+    const existingItem = wantToBuyItems.find(i => i.id === id);
+    if (!existingItem) return;
+    const updated = { ...existingItem, name: item.name, quantity: item.quantity };
+    await SmartDBService.set(`wantToBuy/${id}`, updated);
+  };
+
+  const toggleWantToBuyItem = async (id: string) => {
+    const existingItem = wantToBuyItems.find(i => i.id === id);
+    if (!existingItem) return;
+    const updated = { ...existingItem, checked: !existingItem.checked };
+    await SmartDBService.set(`wantToBuy/${id}`, updated);
+  };
+
+  const deleteWantToBuyItem = async (id: string) => {
+    await SmartDBService.remove(`wantToBuy/${id}`);
+  };
+
+  const setMonthlyBudget = async (month: string, amount: number) => {
+    await SmartDBService.set(`budgets/month_${month.replace('-', '_')}`, {
+      month,
+      amount,
+      setBy: currentUser?.fullName || 'Owner',
+      createdAt: new Date().toISOString(),
+      userEmail: currentUser?.email || ''
+    });
+  };
+
+  const addGiveMoneyTransaction = async (userId: string, amount: number, purpose: string, date: string) => {
+    const selectedUser = users.find(u => u.uid === userId);
+    if (!selectedUser) return;
+
+    const newTx = {
+      userId,
+      userName: selectedUser.fullName,
+      userEmail: selectedUser.email,
+      amount,
+      purpose,
+      date,
+      addedBy: currentUser?.fullName || 'Owner'
+    };
+
+    await SmartDBService.push('transactions', newTx);
+  };
+
+  const updateUserPermissions = async (userId: string, permissions: UserPermissions) => {
+    const targetUser = users.find(u => u.uid === userId);
+    if (!targetUser) return;
+    const updated = { ...targetUser, permissions };
+    await SmartDBService.set(`users/${userId}`, updated);
+  };
+
+  const removeUserAccess = async (userId: string) => {
+    await SmartDBService.remove(`users/${userId}`);
+  };
+
+  const updateCustomization = async (updated: Partial<AppCustomization>) => {
+    const newCustom = { ...customization, ...updated };
+    await SmartDBService.set('customization', newCustom);
+  };
+
+  const addNotification = async (title: string, message: string) => {
+    const newNotif: AppNotification = {
+      id: `nt_${Date.now()}`,
+      title,
+      message,
+      timestamp: Date.now(),
+      read: false
+    };
+    await SmartDBService.push('notifications', newNotif);
+  };
+
+  const clearNotifications = async () => {
+    await SmartDBService.remove('notifications');
+  };
+
+  return (
+    <StateContext.Provider value={{
+      currentUser,
+      users,
+      expenses,
+      wantToBuyItems,
+      giveMoneyTransactions,
+      budgets,
+      notifications,
+      customization,
+      loading,
+      activeMonth,
+      currentScreen,
+      currentScreenParams,
+      activeFlow,
+      firebaseMode,
+      
+      login,
+      register,
+      logout,
+      
+      navigate,
+      goBack,
+      setActiveMonth,
+      setActiveFlow,
+      
+      addExpense,
+      editExpense,
+      deleteExpense,
+      addWantToBuyItem,
+      editWantToBuyItem,
+      toggleWantToBuyItem,
+      deleteWantToBuyItem,
+      setMonthlyBudget,
+      addGiveMoneyTransaction,
+      updateUserPermissions,
+      removeUserAccess,
+      updateCustomization,
+      addNotification,
+      clearNotifications,
+      
+      getCurrencySymbol,
+      formatCurrency,
+      clearAllDummyData
+    }}>
+      {children}
+    </StateContext.Provider>
+  );
+};
+
+export const useAppState = () => {
+  const context = useContext(StateContext);
+  if (!context) throw new Error('useAppState must be used within StateProvider');
+  return context;
+};
+</file>
+
+</files>

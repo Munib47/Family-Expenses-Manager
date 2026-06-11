@@ -1,43 +1,59 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { getFirestore, doc, collection, setDoc, getDoc, onSnapshot, deleteDoc, getDocs, runTransaction } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, doc, collection, setDoc, getDoc, onSnapshot, deleteDoc, getDocs } from 'firebase/firestore';
 import aiStudioConfig from '../../firebase-applet-config.json';
 
-const isCustomConfig = !!import.meta.env.VITE_FIREBASE_PROJECT_ID;
+const isAiStudioPreview = typeof window !== 'undefined' && 
+  (window.location.hostname.includes('aistudio.google') || window.location.hostname.includes('web-applet'));
 
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || aiStudioConfig.apiKey,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || aiStudioConfig.authDomain,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || aiStudioConfig.projectId,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || aiStudioConfig.storageBucket,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || aiStudioConfig.messagingSenderId,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || aiStudioConfig.appId,
-};
+const firebaseConfig = !isAiStudioPreview 
+  ? {
+      apiKey: "AIzaSyCGcQCkoJkEtKxIzQz8BV_eXudtkWpDJdw",
+      authDomain: "family-expense-manager-ac9ef.firebaseapp.com",
+      projectId: "family-expense-manager-ac9ef",
+      storageBucket: "family-expense-manager-ac9ef.firebasestorage.app",
+      messagingSenderId: "237145522695",
+      appId: "1:237145522695:web:1f18a77db6f8eb18caa0a2",
+      measurementId: "G-K0KK77TL5M"
+    }
+  : {
+      apiKey: aiStudioConfig.apiKey,
+      authDomain: aiStudioConfig.authDomain,
+      projectId: aiStudioConfig.projectId,
+      storageBucket: aiStudioConfig.storageBucket,
+      messagingSenderId: aiStudioConfig.messagingSenderId,
+      appId: aiStudioConfig.appId,
+      measurementId: aiStudioConfig.measurementId
+    };
 
-const rawDatabaseId = isCustomConfig 
-  ? import.meta.env.VITE_FIREBASE_DATABASE_ID 
-  : aiStudioConfig.firestoreDatabaseId;
+const firestoreDatabaseId = !isAiStudioPreview ? undefined : aiStudioConfig.firestoreDatabaseId;
 
-// If a Google Analytics Measurement ID (G-XXXXX) was accidentally provided 
-// as the Database ID, ignore it to prevent Firestore connection errors.
-const firestoreDatabaseId = rawDatabaseId?.startsWith('G-') 
-  ? aiStudioConfig.firestoreDatabaseId 
-  : rawDatabaseId;
-
-// Initialize Firebase App
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 export const auth = getAuth(app);
 export const db = firestoreDatabaseId ? getFirestore(app, firestoreDatabaseId) : getFirestore(app);
 
-const withTimeout = (promise: Promise<any>, timeoutMs: number = 3000) => {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeoutMs))
-  ]);
+if (import.meta.env.DEV) {
+  console.log(`[Firebase Active] Project: "${firebaseConfig.projectId}" | DB: "${firestoreDatabaseId || '(default)'}"`);
+}
+
+/**
+ * Defensive Data Utility: Recursively removes `undefined` properties or converts them to `null`
+ */
+const sanitizePayload = (obj: any): any => {
+  if (obj === undefined) return null;
+  if (obj === null || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(sanitizePayload);
+
+  return Object.keys(obj).reduce((acc: any, key) => {
+    const val = obj[key];
+    if (val !== undefined) {
+      acc[key] = sanitizePayload(val);
+    }
+    return acc;
+  }, {});
 };
 
-// Safe database operation wrappers that work with Firestore but have a local-first fallback
 export class SmartDBService {
   private static useFallback = false;
   private static fallbackData: Record<string, any> = JSON.parse(localStorage.getItem('family_expenses_fallback_db') || '{}');
@@ -46,11 +62,10 @@ export class SmartDBService {
     localStorage.setItem('family_expenses_fallback_db', JSON.stringify(this.fallbackData));
   }
 
+  // Only enable fallback if we are sure we are offline/unauthorized
   static enableFallbackMode(reason: string) {
     if (!this.useFallback) {
-      if (!reason.includes('auth-emulation')) {
-        console.warn('Switching to local-first fallback database mode due to:', reason);
-      }
+      console.warn('Switching to local-first fallback due to:', reason);
       this.useFallback = true;
     }
   }
@@ -59,235 +74,180 @@ export class SmartDBService {
     return this.useFallback;
   }
 
-  // Set data at path
   static async set(path: string, data: any): Promise<void> {
     if (this.useFallback) {
-      const parts = path.split('/');
-      let current = this.fallbackData;
-      for (let i = 0; i < parts.length - 1; i++) {
-        if (!current[parts[i]]) current[parts[i]] = {};
-        current = current[parts[i]];
-      }
-      current[parts[parts.length - 1]] = data;
-      this.saveFallback();
-      this.triggerListeners(parts[0], this.fallbackData[parts[0]]);
+      this.updateFallbackData(path, data);
       return;
     }
 
     try {
       const parts = path.split('/');
       if (parts.length === 1) {
-        if (!data) { // Used for clearing collections
-          const snapshot = await withTimeout(getDocs(collection(db, path)));
-          // Using regular loops rather than batch for simplicity in wrapper
-          for (const d of snapshot.docs) {
-             await withTimeout(deleteDoc(d.ref));
-          }
+        if (!data) {
+          const snapshot = await getDocs(collection(db, path));
+          for (const d of snapshot.docs) await deleteDoc(d.ref);
         }
       } else {
         const docRef = doc(db, parts[0], parts.slice(1).join('/'));
         if (data === null || data === undefined) {
-          await withTimeout(deleteDoc(docRef));
+          await deleteDoc(docRef);
         } else {
-          await withTimeout(setDoc(docRef, data));
+          await setDoc(docRef, sanitizePayload(data));
         }
       }
     } catch (err: any) {
-      console.error(`Firebase Set error at index: ${path}`, err);
-      // Fallback
-      this.enableFallbackMode(err.message || 'database-error');
-      const parts = path.split('/');
-      let current = this.fallbackData;
-      for (let i = 0; i < parts.length - 1; i++) {
-        if (!current[parts[i]]) current[parts[i]] = {};
-        current = current[parts[i]];
-      }
-      current[parts[parts.length - 1]] = data;
-      this.saveFallback();
-      this.triggerListeners(parts[0], this.fallbackData[parts[0]]);
+      console.error(`Firebase Set error at: ${path}`, err);
+      if (this.isNetworkError(err)) this.enableFallbackMode(err.message);
+      this.updateFallbackData(path, data);
     }
   }
 
-  // Push data (add item to list)
   static async push(path: string, data: any): Promise<string> {
     if (this.useFallback) {
       const newId = `id_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-      if (!this.fallbackData[path]) this.fallbackData[path] = {};
-      const actualData = { ...data, id: newId };
-      this.fallbackData[path][newId] = actualData;
-      this.saveFallback();
-      this.triggerListeners(path, this.fallbackData[path]);
+      this.updateFallbackData(path, { ...data, id: newId }, true);
       return newId;
     }
 
     try {
-      const collRef = collection(db, path);
-      const newRef = doc(collRef);
-      const key = newRef.id;
-      const actualData = { ...data, id: key };
-      await withTimeout(setDoc(newRef, actualData));
-      return key;
+      const newRef = doc(collection(db, path));
+      await setDoc(newRef, sanitizePayload({ ...data, id: newRef.id }));
+      return newRef.id;
     } catch (err: any) {
-      console.error(`Firebase Push error at indexing: ${path}`, err);
-      this.enableFallbackMode(err.message || 'database-error');
+      console.error(`Firebase Push error at: ${path}`, err);
+      if (this.isNetworkError(err)) this.enableFallbackMode(err.message);
       const newId = `id_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-      if (!this.fallbackData[path]) this.fallbackData[path] = {};
-      const actualData = { ...data, id: newId };
-      this.fallbackData[path][newId] = actualData;
-      this.saveFallback();
-      this.triggerListeners(path, this.fallbackData[path]);
+      this.updateFallbackData(path, { ...data, id: newId }, true);
       return newId;
     }
   }
 
-  // Listen to path
   private static listeners: Record<string, Array<(data: any) => void>> = {};
 
   private static triggerListeners(path: string, data: any) {
-    if (this.listeners[path]) {
-      this.listeners[path].forEach(cb => cb(data));
-    }
+    if (this.listeners[path]) this.listeners[path].forEach(cb => cb(data));
   }
 
-  static onValue(path: string, callback: (data: any) => void, errorCallback?: (err: any) => void): () => void {
+  static onValue(path: string, callback: (data: any) => void): () => void {
     if (this.useFallback) {
-      // Call immediately
       callback(this.fallbackData[path] || null);
       if (!this.listeners[path]) this.listeners[path] = [];
       this.listeners[path].push(callback);
-      return () => {
-        this.listeners[path] = (this.listeners[path] || []).filter(cb => cb !== callback);
-      };
+      return () => { this.listeners[path] = this.listeners[path].filter(cb => cb !== callback); };
     }
 
     const parts = path.split('/');
-    if (parts.length === 1) {
-      const collRef = collection(db, path);
-      const unsubscribe = onSnapshot(collRef, (snapshot) => {
+    const isCollection = parts.length === 1;
+    const ref = isCollection ? collection(db, path) : doc(db, parts[0], parts.slice(1).join('/'));
+
+    const unsubscribe = onSnapshot(ref as any, (snapshot) => {
+      if (isCollection) {
         const obj: any = {};
-        snapshot.forEach(d => {
-          obj[d.id] = d.data();
-        });
+        snapshot.forEach((d: any) => { obj[d.id] = d.data(); });
         callback(obj);
-      }, (err) => {
-        console.error(`Firebase onSnapshot error on collection: ${path}`, err);
-        if (err.message?.includes('Permission denied') || err.message?.includes('PERMISSION_DENIED') || err.message?.includes('offline') || err.message?.includes('operation') || err.message?.includes('unavailable')) {
-          this.enableFallbackMode(err.message);
-          callback(this.fallbackData[path] || null);
-          if (!this.listeners[path]) this.listeners[path] = [];
-          this.listeners[path].push(callback);
-        } else if (errorCallback) {
-          errorCallback(err);
-        }
-      });
-      return () => {
-        unsubscribe();
-        if (this.listeners[path]) {
-           this.listeners[path] = this.listeners[path].filter(cb => cb !== callback);
-        }
-      };
-    } else {
-      const docRef = doc(db, parts[0], parts.slice(1).join('/'));
-      const unsubscribe = onSnapshot(docRef, (snapshot) => {
-        callback(snapshot.exists() ? snapshot.data() : null);
-      }, (err) => {
-        console.error(`Firebase onSnapshot error on doc: ${path}`, err);
-        if (err.message?.includes('Permission denied') || err.message?.includes('PERMISSION_DENIED') || err.message?.includes('offline') || err.message?.includes('operation') || err.message?.includes('unavailable')) {
-          this.enableFallbackMode(err.message);
-          callback(this.fallbackData[path] || null);
-          if (!this.listeners[path]) this.listeners[path] = [];
-          this.listeners[path].push(callback);
-        } else if (errorCallback) {
-          errorCallback(err);
-        }
-      });
-      return () => {
-        unsubscribe();
-        if (this.listeners[path]) {
-           this.listeners[path] = this.listeners[path].filter(cb => cb !== callback);
-        }
-      };
-    }
+      } else {
+        callback((snapshot as any).exists() ? (snapshot as any).data() : null);
+      }
+    }, (err) => {
+      console.error(`Firebase onSnapshot error: ${path}`, err);
+      if (this.isNetworkError(err)) {
+        this.enableFallbackMode(err.message);
+        callback(this.fallbackData[path] || null);
+      }
+    });
+
+    return unsubscribe;
   }
 
-  // Delete node
   static async remove(path: string): Promise<void> {
     if (this.useFallback) {
-      const parts = path.split('/');
-      let current = this.fallbackData;
-      for (let i = 0; i < parts.length - 1; i++) {
-        if (!current[parts[i]]) return;
-        current = current[parts[i]];
-      }
-      delete current[parts[parts.length - 1]];
-      this.saveFallback();
-      this.triggerListeners(parts[0], this.fallbackData[parts[0]]);
+      this.removeFromFallback(path);
       return;
     }
 
     try {
       const parts = path.split('/');
       if (parts.length === 1) {
-        const snapshot = await withTimeout(getDocs(collection(db, path)));
-        for (const d of snapshot.docs) {
-           await withTimeout(deleteDoc(d.ref));
-        }
+        const snapshot = await getDocs(collection(db, path));
+        for (const d of snapshot.docs) await deleteDoc(d.ref);
       } else {
-        const docRef = doc(db, parts[0], parts.slice(1).join('/'));
-        await withTimeout(deleteDoc(docRef));
+        await deleteDoc(doc(db, parts[0], parts.slice(1).join('/')));
       }
     } catch (err: any) {
       console.error(`Firebase Remove error at: ${path}`, err);
-      this.enableFallbackMode(err.message || 'database-error');
-      const parts = path.split('/');
-      let current = this.fallbackData;
-      for (let i = 0; i < parts.length - 1; i++) {
-        if (!current[parts[i]]) return;
-        current = current[parts[i]];
-      }
-      delete current[parts[parts.length - 1]];
-      this.saveFallback();
-      this.triggerListeners(parts[0], this.fallbackData[parts[0]]);
+      if (this.isNetworkError(err)) this.enableFallbackMode(err.message);
+      this.removeFromFallback(path);
     }
   }
 
-  // Get once
   static async get(path: string): Promise<any> {
     if (this.useFallback) {
-      const parts = path.split('/');
-      let current = this.fallbackData;
-      for (const p of parts) {
-        if (current === null || current === undefined) return null;
-        current = current[p];
-      }
-      return current;
+      return this.getFromFallback(path);
     }
 
     try {
       const parts = path.split('/');
       if (parts.length === 1) {
-        const snapshot = await withTimeout(getDocs(collection(db, path)));
+        const snapshot = await getDocs(collection(db, path));
         const obj: any = {};
-        snapshot.forEach((d: any) => {
-          obj[d.id] = d.data();
-        });
+        snapshot.forEach((d: any) => { obj[d.id] = d.data(); });
         return obj;
       } else {
         const docRef = doc(db, parts[0], parts.slice(1).join('/'));
-        const snapshot = await withTimeout(getDoc(docRef));
+        const snapshot = await getDoc(docRef);
         return snapshot.exists() ? snapshot.data() : null;
       }
     } catch (err: any) {
       console.error(`Firebase Get error on: ${path}`, err);
-      this.enableFallbackMode(err.message || 'database-error');
-      const parts = path.split('/');
-      let current = this.fallbackData;
-      for (const p of parts) {
-        if (current === null || current === undefined) return null;
-        current = current[p];
-      }
-      return current;
+      if (this.isNetworkError(err)) this.enableFallbackMode(err.message);
+      return this.getFromFallback(path);
     }
   }
-}
 
+  // --- Helper Methods ---
+
+  private static isNetworkError(err: any): boolean {
+    const msg = err.message?.toLowerCase() || '';
+    return msg.includes('offline') || msg.includes('unavailable') || msg.includes('network') || msg.includes('permission');
+  }
+
+  private static updateFallbackData(path: string, data: any, isPush = false) {
+    const parts = path.split('/');
+    let current = this.fallbackData;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (!current[parts[i]]) current[parts[i]] = {};
+      current = current[parts[i]];
+    }
+    
+    if (isPush) {
+       if (!current[parts[parts.length-1]]) current[parts[parts.length-1]] = {};
+       current[parts[parts.length-1]][data.id] = data;
+    } else {
+       current[parts[parts.length - 1]] = data;
+    }
+    this.saveFallback();
+    this.triggerListeners(parts[0], this.fallbackData[parts[0]]);
+  }
+
+  private static removeFromFallback(path: string) {
+    const parts = path.split('/');
+    let current = this.fallbackData;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (!current[parts[i]]) return;
+      current = current[parts[i]];
+    }
+    delete current[parts[parts.length - 1]];
+    this.saveFallback();
+    this.triggerListeners(parts[0], this.fallbackData[parts[0]]);
+  }
+
+  private static getFromFallback(path: string) {
+    const parts = path.split('/');
+    let current = this.fallbackData;
+    for (const p of parts) {
+      if (!current) return null;
+      current = current[p];
+    }
+    return current;
+  }
+}
