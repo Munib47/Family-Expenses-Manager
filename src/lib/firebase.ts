@@ -1,13 +1,15 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { getFirestore, doc, collection, setDoc, getDoc, onSnapshot, deleteDoc, getDocs, runTransaction } from 'firebase/firestore';
+import { initializeFirestore, doc, collection, setDoc, getDoc, onSnapshot, deleteDoc, getDocs, runTransaction } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
 // Initialize Firebase App
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 export const auth = getAuth(app);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+}, firebaseConfig.firestoreDatabaseId);
 
 const withTimeout = (promise: Promise<any>, timeoutMs: number = 3000) => {
   return Promise.race([
