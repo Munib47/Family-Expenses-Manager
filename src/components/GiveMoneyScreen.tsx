@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAppState } from '../context/StateContext';
-import { ArrowLeft, Save, Sparkles, User, AlertCircle, TrendingUp, HandCoins } from 'lucide-react';
+import { ArrowLeft, Save, Sparkles, User, AlertCircle, TrendingUp, HandCoins, BookOpen, ClipboardList } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const GiveMoneyScreen: React.FC = () => {
@@ -11,7 +11,8 @@ export const GiveMoneyScreen: React.FC = () => {
     goBack, 
     customization,
     currentUser,
-    budgets
+    budgets,
+    getCurrencySymbol
   } = useAppState();
 
   const [selectedUser, setSelectedUser] = useState('');
@@ -113,23 +114,27 @@ export const GiveMoneyScreen: React.FC = () => {
       className="flex-1 flex flex-col p-5 bg-white overflow-y-auto"
     >
       {/* Header */}
-      <div className="flex items-center justify-between mt-2 mb-4">
+      <div className="flex items-center justify-between mt-2 mb-6">
         <button 
           onClick={goBack} 
-          className="p-1 px-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition flex items-center font-semibold text-xs"
+          className="py-2.5 px-5 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide hover:bg-slate-800 active:scale-95 transition flex items-center shadow-lg hover:shadow-xl"
         >
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          Back
+          <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+          Go Back
         </button>
-        <span className="text-xs font-bold text-gray-900 bg-gray-50 px-2.5 py-1 rounded-full border border-gray-100">
-          💸 Give Money Ledger
-        </span>
+        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full shadow-sm border border-emerald-400">
+          <BookOpen className="w-4 h-4 text-white" />
+          <span className="text-xs font-bold text-white tracking-wide">
+            Give Money Ledger
+          </span>
+        </div>
       </div>
 
-      {/* Part 1: Hand / Give Money Form (Step #12) */}
-      <div className="border border-gray-100 rounded-2xl p-4 bg-white shadow-xs mb-5">
-        <h3 className="font-bold text-gray-900 text-sm mb-3 flex items-center gap-1.5">
-          <HandCoins className="w-4.5 h-4.5 text-green-500" />
+      {/* Part 1: Hand / Give Money Form */}
+      <div className="border border-gray-100 rounded-2xl p-5 bg-white shadow-md mb-6 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
+        <h3 className="font-extrabold text-gray-900 text-lg mb-4 flex items-center gap-2">
+          <HandCoins className="w-6 h-6 text-green-500" />
           Add / Give Money
         </h3>
 
@@ -163,64 +168,70 @@ export const GiveMoneyScreen: React.FC = () => {
             </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {/* Amount */}
             <div>
-              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Amount (₹)</label>
-              <input 
-                type="number"
-                placeholder="₹ 0.00"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-180 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-green-500/20 bg-gray-50/70 font-semibold text-gray-800"
-                required
-              />
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Amount (PKR)</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">PKR</span>
+                <input 
+                  type="number"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-gray-50/50 font-bold text-gray-900 transition"
+                  required
+                />
+              </div>
             </div>
 
             {/* Date */}
             <div>
-              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Date</label>
+              <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Date</label>
               <input 
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-180 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-green-500/20 bg-gray-50/70 font-medium text-gray-650"
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-gray-50/50 font-semibold text-gray-800 transition"
                 required
               />
             </div>
           </div>
 
           {/* Purpose details */}
-          <div>
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Purpose / Details</label>
+          <div className="pt-1">
+            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Purpose / Details</label>
             <input 
               type="text"
               placeholder="e.g. Help for groceries, transport"
               value={purpose}
               onChange={(e) => setPurpose(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-180 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-green-500/20 bg-gray-50/70 font-medium text-gray-850"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-gray-50/50 font-semibold text-gray-800 transition"
               required
             />
           </div>
 
-          <button 
-            id="give_money_submit"
-            type="submit"
-            className="w-full py-2.5 text-white font-bold text-xs rounded-xl tracking-wide shadow-xs opacity-90 hover:opacity-100 transition active:scale-[0.98]"
-            style={{ backgroundColor: customBtnColor }}
-          >
-            Save Transaction
-          </button>
+          <div className="pt-2">
+            <button 
+              id="give_money_submit"
+              type="submit"
+              className="w-full py-3.5 bg-black text-white font-extrabold text-sm rounded-xl tracking-wide shadow-md hover:shadow-lg transition active:scale-[0.98] uppercase flex justify-center items-center gap-2"
+            >
+              <Save className="w-5 h-5" />
+              Save Transaction
+            </button>
+          </div>
         </form>
       </div>
 
-      {/* Part 2: All Transactions / Given Money (Step #13) */}
-      <div className="border border-gray-100 rounded-2xl p-4 bg-gray-50/60">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="font-bold text-gray-900 text-xs tracking-wider uppercase text-gray-400">
-            13. All Transactions / Given Money
+      {/* Part 2: All Transactions / Given Money */}
+      <div className="rounded-2xl p-5 bg-black/80 backdrop-blur-md border border-gray-800 shadow-xl mt-2">
+        <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-700">
+          <h3 className="font-extrabold text-white text-base flex items-center gap-2">
+            <ClipboardList className="w-5 h-5 text-indigo-400" />
+            All Transactions
           </h3>
-          <span className="text-[9px] font-bold text-slate-500 bg-white border px-2 py-0.5 rounded-full select-none">
+          <span className="text-xs font-bold text-indigo-200 bg-indigo-900/50 border border-indigo-700/50 px-3 py-1 rounded-full select-none shadow-xs">
             {sortedLedger.length} Records
           </span>
         </div>
@@ -232,11 +243,11 @@ export const GiveMoneyScreen: React.FC = () => {
             sortedLedger.map((item) => (
               <div 
                 key={item.id}
-                className="flex items-center justify-between p-2.5 bg-white border border-gray-100/80 rounded-xl hover:border-gray-200 transition"
+                className="flex items-center justify-between p-2.5 bg-black/40 border border-gray-700/50 rounded-xl hover:border-gray-600 transition"
               >
                 <div>
-                  <h4 className="font-bold text-gray-900 text-[11px] flex items-center gap-1">
-                    <span className={`w-1.5 h-1.5 rounded-full ${item.type === 'budget' ? 'bg-indigo-500' : 'bg-green-500'}`} />
+                  <h4 className="font-bold text-gray-100 text-[11px] flex items-center gap-1">
+                    <span className={`w-1.5 h-1.5 rounded-full ${item.type === 'budget' ? 'bg-indigo-400' : 'bg-green-400'}`} />
                     {item.title}
                   </h4>
                   <p className="text-[9px] text-gray-400 mt-0.5 italic">
@@ -245,11 +256,11 @@ export const GiveMoneyScreen: React.FC = () => {
                 </div>
 
                 <div className="text-right">
-                  <span className="text-xs font-extrabold text-gray-900 block">
-                    ₹{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 1 })}
+                  <span className="text-sm font-extrabold text-white block">
+                    PKR {item.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
-                  <span className="text-[9px] text-gray-400 block mt-0.5">
-                    {new Date(item.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                  <span className="text-[10px] text-gray-400 block mt-0.5 font-medium">
+                    {new Date(item.date).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
                   </span>
                 </div>
               </div>
@@ -257,13 +268,13 @@ export const GiveMoneyScreen: React.FC = () => {
           )}
         </div>
         
-        <div className="text-center mt-3">
+        <div className="text-center mt-5">
           <button 
             type="button"
             onClick={() => alert('Viewing complete consolidated account: showing both family expense limits and member direct allowance logs.')}
-            className="w-full py-1.5 text-xs text-gray-500 hover:text-gray-800 transition font-bold bg-white border border-gray-200 rounded-xl"
+            className="w-full py-2.5 text-xs text-indigo-300 hover:text-white hover:bg-indigo-600 transition font-bold bg-white/10 border border-indigo-500/30 rounded-xl shadow-sm"
           >
-            View All
+            View All Transactions
           </button>
         </div>
       </div>

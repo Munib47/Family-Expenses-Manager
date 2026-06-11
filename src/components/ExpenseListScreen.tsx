@@ -13,7 +13,8 @@ import {
   Wallet,
   CheckCircle,
   AlertTriangle,
-  Calendar
+  Calendar,
+  HandCoins
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -23,6 +24,7 @@ export const ExpenseListScreen: React.FC = () => {
     currentUser, 
     activeMonth, 
     budgets, 
+    giveMoneyTransactions,
     notifications, 
     goBack, 
     navigate, 
@@ -55,8 +57,18 @@ export const ExpenseListScreen: React.FC = () => {
   const totalCount = displayExpenses.length;
 
   // Monthly Budget pacing
-  const currentBudgetObj = budgets.find(b => b.month === activeMonth);
-  const currentBudget = currentBudgetObj ? currentBudgetObj.amount : 0;
+  // For owner: total month budget. For non-owner: sum of given money in that month.
+  let currentBudget = 0;
+  if (isOwner) {
+    const currentBudgetObj = budgets.find(b => b.month === activeMonth);
+    currentBudget = currentBudgetObj ? currentBudgetObj.amount : 0;
+  } else {
+    // Non-owner: Calculate sum of given money for this month
+     currentBudget = giveMoneyTransactions
+      .filter(tx => tx.userId === currentUser?.uid && tx.date.startsWith(activeMonth))
+      .reduce((sum, tx) => sum + tx.amount, 0);
+  }
+
   const percentSpent = currentBudget > 0 ? Math.min((totalAmount / currentBudget) * 100, 100) : 0;
 
   // Human readable month name
@@ -221,17 +233,28 @@ export const ExpenseListScreen: React.FC = () => {
         </div>
       )}
 
-      {/* Action buttons (Add Expense) */}
+      {/* Action buttons (Add Expense & Give Money) */}
       <div className="flex justify-between items-center mb-4 mt-2">
         <h3 className="font-extrabold text-gray-900 text-lg tracking-tight">Expense List</h3>
-        <button 
-          id="add_expense_btn"
-          onClick={() => navigate('add-expense')}
-          className="flex items-center gap-2 px-5 py-2.5 bg-black text-white font-bold text-sm rounded-xl transition shadow-md hover:shadow-lg active:scale-[0.97]"
-        >
-          <Plus className="w-5 h-5 stroke-[2.5]" />
-          Add Expense
-        </button>
+        <div className="flex gap-2">
+          {(isOwner || currentUser?.permissions?.addGiveMoney) && (
+            <button
+              onClick={() => navigate('give-money')}
+              className="flex items-center gap-1.5 px-3 py-2.5 bg-white border border-gray-200 text-gray-800 font-bold text-sm rounded-xl transition shadow-xs hover:shadow-sm active:scale-[0.97]"
+            >
+              <HandCoins className="w-5 h-5 stroke-[2.5]" />
+              Give Money
+            </button>
+          )}
+          <button 
+            id="add_expense_btn"
+            onClick={() => navigate('add-expense')}
+            className="flex items-center gap-1.5 px-3 py-2.5 bg-black text-white font-bold text-sm rounded-xl transition shadow-md hover:shadow-lg active:scale-[0.97]"
+          >
+            <Plus className="w-5 h-5 stroke-[2.5]" />
+            Add Expense
+          </button>
+        </div>
       </div>
 
       {/* Expenses items array list (Step #5 & #6 edit icons) */}
