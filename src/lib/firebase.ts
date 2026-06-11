@@ -14,9 +14,15 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID || aiStudioConfig.appId,
 };
 
-const firestoreDatabaseId = isCustomConfig 
+const rawDatabaseId = isCustomConfig 
   ? import.meta.env.VITE_FIREBASE_DATABASE_ID 
   : aiStudioConfig.firestoreDatabaseId;
+
+// If a Google Analytics Measurement ID (G-XXXXX) was accidentally provided 
+// as the Database ID, ignore it to prevent Firestore connection errors.
+const firestoreDatabaseId = rawDatabaseId?.startsWith('G-') 
+  ? aiStudioConfig.firestoreDatabaseId 
+  : rawDatabaseId;
 
 // Initialize Firebase App
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();

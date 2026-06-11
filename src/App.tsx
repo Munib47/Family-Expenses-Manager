@@ -25,8 +25,8 @@ const CombinedAppContent: React.FC = () => {
   if (loading) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center bg-white p-6">
-        <Loader2 className="w-8 h-8 text-green-500 animate-spin" />
-        <span className="text-xs text-gray-500 font-semibold mt-2.5">Syncing accounts...</span>
+        <div className="w-12 h-12 rounded-full border-4 border-transparent border-t-indigo-500 border-r-teal-500 border-b-green-500 animate-spin" />
+        <span className="text-sm text-slate-600 font-semibold mt-4">Syncing data...</span>
       </div>
     );
   }

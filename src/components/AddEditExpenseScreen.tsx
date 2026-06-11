@@ -31,6 +31,7 @@ export const AddEditExpenseScreen: React.FC = () => {
   });
   const [details, setDetails] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isEdit) {
@@ -59,6 +60,7 @@ export const AddEditExpenseScreen: React.FC = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       if (isEdit) {
         await editExpense(editId, {
@@ -78,11 +80,23 @@ export const AddEditExpenseScreen: React.FC = () => {
       goBack();
     } catch (err: any) {
       setError(err.message || 'An error occurred while saving.');
+      setIsSubmitting(false);
     }
   };
 
   const isOwner = currentUser?.role === 'owner';
   const customBtnColor = isOwner ? customization.btnColor : '#000000';
+
+  if (isSubmitting) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center bg-white p-6">
+        <div className="w-12 h-12 rounded-full border-4 border-transparent border-t-indigo-500 border-r-teal-500 border-b-green-500 animate-spin" />
+        <span className="text-sm text-slate-600 font-semibold mt-4">
+          {isEdit ? 'Updating expense...' : 'Saving expense...'}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <motion.div 
