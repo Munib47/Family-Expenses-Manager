@@ -1,15 +1,13 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { initializeFirestore, doc, collection, setDoc, getDoc, onSnapshot, deleteDoc, getDocs, runTransaction } from 'firebase/firestore';
+import { getFirestore, doc, collection, setDoc, getDoc, onSnapshot, deleteDoc, getDocs, runTransaction } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
 // Initialize Firebase App
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 export const auth = getAuth(app);
-export const db = initializeFirestore(app, {
-  experimentalForceLongPolling: true,
-}, firebaseConfig.firestoreDatabaseId);
+export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 
 const withTimeout = (promise: Promise<any>, timeoutMs: number = 3000) => {
   return Promise.race([
@@ -29,7 +27,9 @@ export class SmartDBService {
 
   static enableFallbackMode(reason: string) {
     if (!this.useFallback) {
-      console.warn('Switching to local-first fallback database mode due to:', reason);
+      if (!reason.includes('auth-emulation')) {
+        console.warn('Switching to local-first fallback database mode due to:', reason);
+      }
       this.useFallback = true;
     }
   }

@@ -375,7 +375,9 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       await signInWithEmailAndPassword(auth, email, pass);
     } catch (err: any) {
-      console.warn("Real Auth failed, using smart browser emulation:", err);
+      if (err.code !== 'auth/operation-not-allowed') {
+        console.warn("Real Auth failed, using smart browser emulation:", err);
+      }
       // Fallback auth emulation
       SmartDBService.enableFallbackMode('auth-emulation');
       const allRegisteredUsers = await SmartDBService.get('users') || {};
@@ -429,7 +431,9 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       await SmartDBService.set(`users/${userCred.user.uid}`, userProfile);
       setCurrentUser(userProfile);
     } catch (err: any) {
-      console.warn("Real Register failed, creating local profile:", err);
+      if (err.code !== 'auth/operation-not-allowed') {
+        console.warn("Real Register failed, creating local profile:", err);
+      }
       SmartDBService.enableFallbackMode('auth-emulation');
       
       const userId = `u_${Date.now()}`;
