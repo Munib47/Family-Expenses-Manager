@@ -54,6 +54,8 @@ export interface MonthlyBudget {
   month: string; // YYYY-MM
   amount: number;
   setBy: string;
+  createdAt?: string; // Exact date of setting the budget
+  userEmail?: string; // Email of the user who set the budget
 }
 
 export interface AppCustomization {

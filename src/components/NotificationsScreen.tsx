@@ -128,7 +128,7 @@ export const NotificationsScreen: React.FC = () => {
               <div className="mt-6">
                 <button
                   onClick={handleClearNotif}
-                  className="w-full py-2.5 px-4 bg-black hover:bg-gray-900 border border-gray-800 text-red-500 font-bold text-xs rounded-xl transition"
+                  className="w-full py-2.5 px-4 bg-gradient-to-r from-teal-500 via-white to-black text-red-600 font-bold text-xs rounded-xl transition shadow-sm hover:opacity-90"
                 >
                   Clear Notification
                 </button>

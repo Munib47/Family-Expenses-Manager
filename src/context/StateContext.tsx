@@ -559,7 +559,9 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     await SmartDBService.set(`budgets/month_${month.replace('-', '_')}`, {
       month,
       amount,
-      setBy: currentUser?.fullName || 'Owner'
+      setBy: currentUser?.fullName || 'Owner',
+      createdAt: new Date().toISOString(),
+      userEmail: currentUser?.email || ''
     });
   };
 
