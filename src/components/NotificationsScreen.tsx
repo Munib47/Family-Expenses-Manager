@@ -54,17 +54,17 @@ export const NotificationsScreen: React.FC = () => {
             <div 
               key={notif.id}
               onClick={() => setSelectedNotif(notif)}
-              className="p-4 bg-gray-50 hover:bg-indigo-50 border border-gray-100 rounded-2xl shadow-xs flex justify-between items-center cursor-pointer transition select-none active:scale-[0.99]"
+              className="p-4 bg-transparent hover:bg-gray-50 border border-gray-100 rounded-2xl shadow-xs flex justify-between items-center cursor-pointer transition select-none active:scale-[0.99]"
             >
               <div className="flex items-start gap-3 flex-1 overflow-hidden">
-                <div className="p-2 bg-indigo-100/50 rounded-lg flex-shrink-0 mt-0.5">
-                  <BellRing className="w-4 h-4 text-indigo-500" />
+                <div className="p-2 bg-red-50 rounded-lg flex-shrink-0 mt-0.5">
+                  <BellRing className="w-4 h-4 text-red-500" />
                 </div>
                 <div className="flex-1 min-w-0 pr-4">
-                  <h4 className="text-sm font-bold text-slate-800 truncate" style={{ color: textCustomColor }}>
+                  <h4 className="text-sm font-bold text-black truncate">
                     {notif.title}
                   </h4>
-                  <p className="text-xs text-gray-500 mt-1 truncate">
+                  <p className="text-xs text-teal-600 mt-1 truncate">
                     {notif.message}
                   </p>
                   <span className="text-[10px] font-medium text-gray-400 mt-2 block">
@@ -102,10 +102,10 @@ export const NotificationsScreen: React.FC = () => {
               </button>
               
               <div className="flex items-center gap-3 mb-5 border-b border-gray-100 pb-4">
-                <div className="p-3 bg-indigo-50 rounded-xl">
-                  <BellRing className="w-5 h-5 text-indigo-500" />
+                <div className="p-3 bg-red-50 rounded-xl">
+                  <BellRing className="w-5 h-5 text-red-500" />
                 </div>
-                <h3 className="font-bold text-gray-900 tracking-tight" style={{ color: textCustomColor }}>
+                <h3 className="font-bold text-black tracking-tight">
                   {selectedNotif.title}
                 </h3>
               </div>
@@ -113,7 +113,7 @@ export const NotificationsScreen: React.FC = () => {
               <div className="space-y-4 text-sm text-gray-600">
                 <div>
                   <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Details</h4>
-                  <p className="leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-100 text-gray-800">
+                  <p className="leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-100 text-teal-600">
                     {selectedNotif.message}
                   </p>
                 </div>
