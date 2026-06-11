@@ -198,7 +198,7 @@ export const ManageUsersScreen: React.FC = () => {
                 style={{ backgroundColor: customDelColor }}
               >
                 <Trash2 className="w-4 h-4" />
-                Remove Access
+                Delete User
               </button>
             </div>
           </motion.div>
