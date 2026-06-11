@@ -180,6 +180,9 @@ export const ExpenseListScreen: React.FC = () => {
               </span>
               <span className="text-sm text-slate-700 font-medium block mt-1">
                 Total Expenses • <strong className="text-slate-900">{totalCount} Items</strong>
+                {currentBudget > 0 && (
+                  <> • <strong className="text-teal-600 text-xs ml-1">Balance: {formatCurrency(currentBudget - totalAmount)}</strong></>
+                )}
               </span>
             </div>
             
@@ -228,6 +231,9 @@ export const ExpenseListScreen: React.FC = () => {
             </span>
             <span className="text-sm text-slate-700 font-medium block mt-1">
               Own Expenses • <strong className="text-slate-900">{totalCount} Items</strong>
+              {currentBudget > 0 && (
+                <> • <strong className="text-teal-600 text-xs ml-1">Balance: {formatCurrency(currentBudget - totalAmount)}</strong></>
+              )}
             </span>
           </div>
         </div>
