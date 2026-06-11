@@ -34,6 +34,11 @@ export const ExpenseListScreen: React.FC = () => {
   } = useAppState();
 
   const [notifExpanded, setNotifExpanded] = useState(false);
+  const [expandedExpenseId, setExpandedExpenseId] = useState<string | null>(null);
+
+  const toggleExpand = (id: string) => {
+      setExpandedExpenseId((prev) => (prev === id ? null : id));
+  };
 
   // Filter expenses based on active month (YYYY-MM)
   const monthExpenses = expenses.filter(e => e.month === activeMonth);
@@ -253,68 +258,100 @@ export const ExpenseListScreen: React.FC = () => {
           displayExpenses.map((exp) => (
             <div 
               key={exp.id} 
-              className="flex items-center justify-between p-3 bg-white border border-gray-100 hover:border-gray-200 rounded-2xl shadow-xs transition"
+              className="flex flex-col p-3 bg-white border border-gray-100 hover:border-gray-200 rounded-2xl shadow-xs transition cursor-pointer"
+              onClick={() => toggleExpand(exp.id)}
             >
-              <div className="flex items-center gap-3">
-                <div 
-                  className="w-10 h-10 rounded-xl flex flex-col items-center justify-center text-xs border"
-                  style={{ 
-                    borderColor: `${accentColor}1A`, 
-                    backgroundColor: `${accentColor}08`, 
-                    color: accentColor 
-                  }}
-                >
-                  <span className="font-bold text-sm">
-                    {new Date(exp.date).getDate()}
-                  </span>
-                  <span className="text-[8px] uppercase font-bold text-gray-400">
-                    {new Date(exp.date).toLocaleString('default', { month: 'short' })}
-                  </span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div 
+                    className="w-10 h-10 rounded-xl flex flex-col items-center justify-center text-xs border"
+                    style={{ 
+                      borderColor: `${accentColor}1A`, 
+                      backgroundColor: `${accentColor}08`, 
+                      color: accentColor 
+                    }}
+                  >
+                    <span className="font-bold text-sm">
+                      {new Date(exp.date).getDate()}
+                    </span>
+                    <span className="text-[8px] uppercase font-bold text-gray-400">
+                      {new Date(exp.date).toLocaleString('default', { month: 'short' })}
+                    </span>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-[13px]">{exp.title}</h4>
+                    <p className="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
+                      <User className="w-2.5 h-2.5" />
+                      By {exp.userName || exp.userEmail.split('@')[0]}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-gray-900 text-[13px]">{exp.title}</h4>
-                  <p className="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
-                    <User className="w-2.5 h-2.5" />
-                    By {exp.userName || exp.userEmail.split('@')[0]}
-                  </p>
+
+                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                  <div className="text-right">
+                    <span className="text-sm font-bold text-gray-900 block">
+                      {formatCurrency(exp.amount, exp.userId)}
+                    </span>
+                    {exp.details && (
+                      <span className="text-[9px] text-gray-400 block max-w-[80px] truncate">
+                        {exp.details}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Edit Icon Button */}
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); navigate('add-expense', { editId: exp.id }); }}
+                    className="p-1 px-1.5 rounded-lg border border-gray-100 hover:bg-gray-50 text-gray-500 hover:text-gray-900 transition flex items-center justify-center"
+                    title="Edit record"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                  </button>
+
+                  {/* Delete Icon Button */}
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (confirm(`Are you sure you want to delete this expense of ${formatCurrency(exp.amount, exp.userId)}?`)) {
+                        deleteExpense(exp.id);
+                      }
+                    }}
+                    className="p-1 px-1.5 rounded-lg border border-red-50 hover:bg-red-50 text-red-500 transition flex items-center justify-center"
+                    style={{ color: deleteBtnColor }}
+                    title="Delete record"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="text-right">
-                  <span className="text-sm font-bold text-gray-900 block">
-                    {formatCurrency(exp.amount, exp.userId)}
-                  </span>
+              {/* Expanded details section */}
+              {expandedExpenseId === exp.id && (
+                <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-600 space-y-2 animate-in fade-in transition">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Title</span>
+                    <span className="font-semibold text-gray-900">{exp.title}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Amount</span>
+                    <span className="font-semibold text-gray-900">{formatCurrency(exp.amount, exp.userId)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Date</span>
+                    <span className="font-semibold text-gray-900">{new Date(exp.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Logged By</span>
+                    <span className="font-semibold text-gray-900">{exp.userName || exp.userEmail.split('@')[0]}</span>
+                  </div>
                   {exp.details && (
-                    <span className="text-[9px] text-gray-400 block max-w-[80px] truncate">
-                      {exp.details}
-                    </span>
+                    <div className="flex flex-col gap-1 mt-2 pt-2 border-t border-gray-50">
+                      <span className="text-gray-400">Details / Notes</span>
+                      <span className="text-gray-800 bg-gray-50 p-2 rounded-lg leading-relaxed">{exp.details}</span>
+                    </div>
                   )}
                 </div>
-
-                {/* Edit Icon Button */}
-                <button 
-                  onClick={() => navigate('add-expense', { editId: exp.id })}
-                  className="p-1 px-1.5 rounded-lg border border-gray-100 hover:bg-gray-50 text-gray-500 hover:text-gray-900 transition flex items-center justify-center"
-                  title="Edit record"
-                >
-                  <Edit3 className="w-3.5 h-3.5" />
-                </button>
-
-                {/* Delete Icon Button */}
-                <button 
-                  onClick={() => {
-                    if (confirm(`Are you sure you want to delete this expense of ${formatCurrency(exp.amount, exp.userId)}?`)) {
-                      deleteExpense(exp.id);
-                    }
-                  }}
-                  className="p-1 px-1.5 rounded-lg border border-red-50 hover:bg-red-50 text-red-500 transition flex items-center justify-center"
-                  style={{ color: deleteBtnColor }}
-                  title="Delete record"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              )}
             </div>
           ))
         )}
