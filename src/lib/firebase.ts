@@ -1,13 +1,28 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { getFirestore, doc, collection, setDoc, getDoc, onSnapshot, deleteDoc, getDocs, runTransaction } from 'firebase/firestore';
-import firebaseConfig from '../../firebase-applet-config.json';
+import aiStudioConfig from '../../firebase-applet-config.json';
+
+const isCustomConfig = !!import.meta.env.VITE_FIREBASE_PROJECT_ID;
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || aiStudioConfig.apiKey,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || aiStudioConfig.authDomain,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || aiStudioConfig.projectId,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || aiStudioConfig.storageBucket,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || aiStudioConfig.messagingSenderId,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || aiStudioConfig.appId,
+};
+
+const firestoreDatabaseId = isCustomConfig 
+  ? import.meta.env.VITE_FIREBASE_DATABASE_ID 
+  : aiStudioConfig.firestoreDatabaseId;
 
 // Initialize Firebase App
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 export const auth = getAuth(app);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db = firestoreDatabaseId ? getFirestore(app, firestoreDatabaseId) : getFirestore(app);
 
 const withTimeout = (promise: Promise<any>, timeoutMs: number = 3000) => {
   return Promise.race([
