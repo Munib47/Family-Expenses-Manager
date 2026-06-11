@@ -505,7 +505,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const formattedNew = formatCurrency(expenseData.amount, existingExp.userId);
     await addNotification(
       'Expense Updated',
-      `${currentUser.fullName} has updated an expense (${existingExp.title}) in ${activeMonth}. Amount: ${formattedOld} → ${formattedNew}`
+      `${currentUser.fullName} changed in ${existingExp.title}, Change the price from ${formattedOld} to ${formattedNew}`
     );
   };
 

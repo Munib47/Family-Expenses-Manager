@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppState } from '../context/StateContext';
-import { Landmark, ShoppingCart, Settings, Users, LogOut, ShieldAlert } from 'lucide-react';
+import { Landmark, ShoppingCart, Settings, Users, LogOut, ShieldAlert, BellRing } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const ChooseOptionScreen: React.FC = () => {
@@ -85,13 +85,20 @@ export const ChooseOptionScreen: React.FC = () => {
       {isOwner ? (
         <div className="border-t border-gray-100 pt-4 mt-4 space-y-2">
           <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center mb-2">Owner Controls</h4>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <button 
               onClick={() => navigate('manage-users')}
               className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-gray-100 hover:bg-gray-50 text-xs font-semibold text-gray-700 transition"
             >
               <Users className="w-3.5 h-3.5" />
-              Manage Users
+              Users
+            </button>
+            <button 
+              onClick={() => navigate('notifications')}
+              className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-gray-100 hover:bg-gray-50 text-xs font-semibold text-gray-700 transition"
+            >
+              <BellRing className="w-3.5 h-3.5" />
+              Alerts
             </button>
             <button 
               onClick={() => navigate('settings')}

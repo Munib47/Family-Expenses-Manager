@@ -7,8 +7,18 @@ import { AppNotification } from '../types';
 export const NotificationsScreen: React.FC = () => {
   const { goBack, notifications, customization } = useAppState();
   const [selectedNotif, setSelectedNotif] = useState<AppNotification | null>(null);
+  const [clearedIds, setClearedIds] = useState<string[]>([]);
 
   const textCustomColor = customization.textColor;
+
+  const visibleNotifications = notifications.filter(n => !clearedIds.includes(n.id));
+
+  const handleClearNotif = () => {
+    if (selectedNotif) {
+      setClearedIds(prev => [...prev, selectedNotif.id]);
+      setSelectedNotif(null);
+    }
+  };
 
   return (
     <motion.div 
@@ -33,14 +43,14 @@ export const NotificationsScreen: React.FC = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 pb-10 space-y-3">
-        {notifications.length === 0 ? (
+        {visibleNotifications.length === 0 ? (
           <div className="text-center mt-20 p-6 bg-gray-50 rounded-2xl border border-gray-100">
             <BellRing className="w-12 h-12 mx-auto text-gray-300 mb-3" />
             <h3 className="text-sm font-bold text-gray-500">No Notifications</h3>
             <p className="text-xs text-gray-400 mt-1">Updates and events will appear here.</p>
           </div>
         ) : (
-          notifications.map(notif => (
+          visibleNotifications.map(notif => (
             <div 
               key={notif.id}
               onClick={() => setSelectedNotif(notif)}
@@ -113,6 +123,15 @@ export const NotificationsScreen: React.FC = () => {
                     {new Date(selectedNotif.timestamp).toLocaleString()}
                   </p>
                 </div>
+              </div>
+
+              <div className="mt-6">
+                <button
+                  onClick={handleClearNotif}
+                  className="w-full py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition"
+                >
+                  Clear Notification
+                </button>
               </div>
             </motion.div>
           </motion.div>
