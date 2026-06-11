@@ -27,6 +27,7 @@ export interface Expense {
   userEmail: string;
   userName: string;
   month: string; // YYYY-MM
+  createdAt?: number;
 }
 
 export interface WantToBuyItem {

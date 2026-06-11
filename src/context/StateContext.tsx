@@ -475,7 +475,8 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       userId: currentUser.uid,
       userEmail: currentUser.email,
       userName: currentUser.fullName,
-      month: activeMonth
+      month: activeMonth,
+      createdAt: Date.now()
     };
 
     const expId = await SmartDBService.push('expenses', finalData);

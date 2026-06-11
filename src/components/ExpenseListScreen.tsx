@@ -48,9 +48,15 @@ export const ExpenseListScreen: React.FC = () => {
   const isOwner = currentUser?.role === 'owner';
   const hasTotalSpendingAccess = isOwner || currentUser?.permissions?.seeTotalSpending;
 
-  const displayExpenses = isOwner 
+  let displayExpenses = isOwner 
     ? monthExpenses 
     : monthExpenses.filter(e => e.userId === currentUser?.uid);
+
+  displayExpenses = [...displayExpenses].sort((a, b) => {
+    const timeA = a.createdAt || new Date(a.date).getTime();
+    const timeB = b.createdAt || new Date(b.date).getTime();
+    return timeB - timeA;
+  });
 
   // Calculations
   const totalAmount = displayExpenses.reduce((sum, e) => sum + e.amount, 0);
@@ -304,7 +310,7 @@ export const ExpenseListScreen: React.FC = () => {
                     <h4 className="font-bold text-gray-900 text-[13px]">{exp.title}</h4>
                     <p className="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
                       <User className="w-2.5 h-2.5" />
-                      By {exp.userName || exp.userEmail.split('@')[0]}
+                      Added by {exp.userName || exp.userEmail.split('@')[0]}
                     </p>
                   </div>
                 </div>
@@ -362,8 +368,14 @@ export const ExpenseListScreen: React.FC = () => {
                     <span className="text-gray-400">Date</span>
                     <span className="font-semibold text-gray-900">{new Date(exp.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                   </div>
+                  {exp.createdAt && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Time</span>
+                      <span className="font-semibold text-gray-900">{new Date(exp.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Logged By</span>
+                    <span className="text-gray-400">Added By</span>
                     <span className="font-semibold text-gray-900">{exp.userName || exp.userEmail.split('@')[0]}</span>
                   </div>
                   {exp.details && (
