@@ -22,7 +22,6 @@ interface StateContextType {
   notifications: AppNotification[];
   customization: AppCustomization;
   loading: boolean;
-  dataLoaded: boolean;
   activeMonth: string; // YYYY-MM
   currentScreen: string; // Screen ID
   currentScreenParams: any; // navigation params
@@ -100,7 +99,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [customization, setCustomization] = useState<AppCustomization>(defaultCustomization);
   const [loading, setLoading] = useState(true);
-  const [dataLoaded, setDataLoaded] = useState(false);
   const [firebaseMode, setFirebaseMode] = useState<'firebase' | 'local'>('firebase');
   
   // Navigation stack
@@ -243,25 +241,10 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Database listeners - only trigger when user is authenticated
   useEffect(() => {
-    if (!currentUser) {
-      setDataLoaded(false);
-      return;
-    }
-
-    setDataLoaded(false);
-    let loadedCount = 0;
-    const requiredLoads = 7;
-    const markLoaded = () => {
-      loadedCount++;
-      if (loadedCount >= requiredLoads) {
-        setDataLoaded(true);
-      }
-    };
+    if (!currentUser) return;
 
     // 1. Sync User list
-    let firstUsers = true;
     const unsubUsers = SmartDBService.onValue('users', (data) => {
-      if (firstUsers) { firstUsers = false; markLoaded(); }
       if (data) {
         const uList: UserProfile[] = Object.values(data);
         setUsers(uList);
@@ -271,9 +254,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
 
     // 2. Sync Expenses
-    let firstExpenses = true;
     const unsubExpenses = SmartDBService.onValue('expenses', (data) => {
-      if (firstExpenses) { firstExpenses = false; markLoaded(); }
       if (data) {
         const eList: Expense[] = Object.keys(data).map(key => ({
           ...data[key],
@@ -286,9 +267,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
 
     // 3. Sync Want to Buy Items
-    let firstBuy = true;
     const unsubBuy = SmartDBService.onValue('wantToBuy', (data) => {
-      if (firstBuy) { firstBuy = false; markLoaded(); }
       if (data) {
         const bList: WantToBuyItem[] = Object.keys(data).map(key => ({
           ...data[key],
@@ -301,9 +280,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
 
     // 4. Sync Special Transactions
-    let firstTx = true;
     const unsubTx = SmartDBService.onValue('transactions', (data) => {
-      if (firstTx) { firstTx = false; markLoaded(); }
       if (data) {
         const tList: GiveMoneyTransaction[] = Object.values(data);
         setGiveMoneyTransactions(tList);
@@ -313,9 +290,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
 
     // 5. Sync Budgets
-    let firstBudgets = true;
     const unsubBudgets = SmartDBService.onValue('budgets', (data) => {
-      if (firstBudgets) { firstBudgets = false; markLoaded(); }
       if (data) {
         const bList: MonthlyBudget[] = Object.values(data);
         setBudgets(bList);
@@ -325,9 +300,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
 
     // 6. Sync Customizations
-    let firstCustom = true;
     const unsubCustom = SmartDBService.onValue('customization', (data) => {
-      if (firstCustom) { firstCustom = false; markLoaded(); }
       if (data) {
         setCustomization({ ...defaultCustomization, ...data });
       } else {
@@ -336,9 +309,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
 
     // 7. Sync Notifications
-    let firstNotif = true;
     const unsubNotifications = SmartDBService.onValue('notifications', (data) => {
-      if (firstNotif) { firstNotif = false; markLoaded(); }
       if (data) {
         const nList: AppNotification[] = Object.values(data);
         setNotifications(nList.sort((a,b) => b.timestamp - a.timestamp));
@@ -654,7 +625,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       notifications,
       customization,
       loading,
-      dataLoaded,
       activeMonth,
       currentScreen,
       currentScreenParams,
