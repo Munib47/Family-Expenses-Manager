@@ -102,10 +102,10 @@ export const ManageUsersScreen: React.FC = () => {
         <div className="flex items-center justify-between mt-2 mb-4">
           <button 
             onClick={goBack} 
-            className="p-1 px-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition flex items-center font-semibold text-xs"
+            className="py-2.5 px-5 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide hover:bg-slate-850 active:scale-95 transition flex items-center shadow-lg hover:shadow-xl"
           >
-            <ArrowLeft className="w-4 h-4 mr-1" />
-            Back
+            <ArrowLeft className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+            Go Back
           </button>
           
           {/* Add Whitelisted Member */}
