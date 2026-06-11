@@ -347,7 +347,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     await SmartDBService.set('wantToBuy', null);
     await SmartDBService.set('transactions', null);
     await SmartDBService.set('budgets', null);
-    await SmartDBService.set('notifications', null);
     
     // Also remove seeded demo users but keep the logged-in user profile
     const allUsers = await SmartDBService.get('users') || {};

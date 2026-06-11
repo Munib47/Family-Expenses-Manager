@@ -25,8 +25,8 @@ export const ManageUsersScreen: React.FC = () => {
   const [newUserEmail, setNewUserEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  // Exclude owner themselves from active admin listings
-  const listUsers = users.filter(u => u.uid !== currentUser?.uid);
+  // Display all users including the owner
+  const listUsers = users;
 
   const handleSelectUser = (user: typeof users[0]) => {
     setSelectedUser(user);
@@ -71,7 +71,6 @@ export const ManageUsersScreen: React.FC = () => {
       };
       
       // Save
-      await removeUserAccess(userId); // wait we just push to whitelist
       // Standard import path to DB:
       const { SmartDBService } = await import('../lib/firebase');
       await SmartDBService.set(`users/${userId}`, newUser);
@@ -191,15 +190,17 @@ export const ManageUsersScreen: React.FC = () => {
               </button>
 
               {/* Remove Access */}
-              <button
-                id="remove_user_access_btn"
-                onClick={() => handleRemoveAccess(selectedUser.uid)}
-                className="w-full py-3 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 active:scale-[0.98] hover:bg-red-750"
-                style={{ backgroundColor: customDelColor }}
-              >
-                <Trash2 className="w-4 h-4" />
-                Delete User
-              </button>
+              {selectedUser.uid !== currentUser?.uid && (
+                <button
+                  id="remove_user_access_btn"
+                  onClick={() => handleRemoveAccess(selectedUser.uid)}
+                  className="w-full py-3 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 active:scale-[0.98] hover:bg-red-750"
+                  style={{ backgroundColor: customDelColor }}
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete User
+                </button>
+              )}
             </div>
           </motion.div>
         )}

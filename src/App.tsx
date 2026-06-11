@@ -15,6 +15,7 @@ import { SettingsScreen } from './components/SettingsScreen';
 import { CustomizationScreen } from './components/CustomizationScreen';
 import { ManageUsersScreen } from './components/ManageUsersScreen';
 import { PermissionsScreen } from './components/PermissionsScreen';
+import { NotificationsScreen } from './components/NotificationsScreen';
 import { Loader2 } from 'lucide-react';
 
 const CombinedAppContent: React.FC = () => {
@@ -58,6 +59,8 @@ const CombinedAppContent: React.FC = () => {
       return <CustomizationScreen />;
     case 'manage-users':
       return <ManageUsersScreen />;
+    case 'notifications':
+      return <NotificationsScreen />;
     case 'permissions-set':
       return <PermissionsScreen />;
     default:

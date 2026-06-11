@@ -115,12 +115,12 @@ export const SettingsScreen: React.FC = () => {
 
           {/* Core options for everyone */}
           <button 
-            onClick={() => handleAction('Notification Settings')}
+            onClick={() => navigate('notifications')}
             className="w-full flex items-center justify-between p-4 border border-gray-100 hover:border-gray-200 rounded-2xl bg-white hover:bg-gray-50 transition text-sm font-bold text-left shadow-xs active:scale-[0.99] cursor-pointer"
           >
             <div className="flex items-center gap-3 text-gray-800">
-              <BellRing className="w-5 h-5 text-rose-500 animate-pulse" />
-              <span>Notification Settings</span>
+              <BellRing className="w-5 h-5 text-rose-500" />
+              <span>Notifications</span>
             </div>
             <ChevronRight className="w-4 h-4 text-gray-450" />
           </button>

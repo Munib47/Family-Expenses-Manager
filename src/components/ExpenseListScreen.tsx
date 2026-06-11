@@ -24,7 +24,6 @@ export const ExpenseListScreen: React.FC = () => {
     activeMonth, 
     budgets, 
     notifications, 
-    clearNotifications,
     goBack, 
     navigate, 
     customization,
@@ -150,12 +149,6 @@ export const ExpenseListScreen: React.FC = () => {
               className="flex-1 py-1 px-3 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-semibold text-[11px] rounded-xl transition"
             >
               View Details
-            </button>
-            <button 
-              onClick={clearNotifications}
-              className="py-1 px-3 bg-amber-200/50 hover:bg-amber-200 text-amber-800 font-semibold text-[11px] rounded-xl transition"
-            >
-              Clear
             </button>
           </div>
         </motion.div>
