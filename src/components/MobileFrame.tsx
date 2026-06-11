@@ -52,11 +52,13 @@ export const MobileFrame: React.FC<MobileFrameProps> = ({ children }) => {
         </div>
       </main>
 
-      <footer className="w-full max-w-5xl mx-auto text-center z-10">
-        <p className="text-slate-500 text-xs">
-          Role Access: <strong className="text-slate-300">owner@example.com</strong> (Family Owner) | Registered users sign in with their email.
-        </p>
-      </footer>
+      {isOwner && (
+        <footer className="w-full max-w-5xl mx-auto text-center z-10">
+          <p className="text-slate-500 text-xs">
+            Role Access: <strong className="text-slate-300">munibahmad47@gmail.com</strong> (Munib Ahmad) | Registered users sign in with their email.
+          </p>
+        </footer>
+      )}
     </div>
   );
 };

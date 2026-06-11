@@ -10,7 +10,7 @@ import {
   UserPermissions
 } from '../types';
 import { SmartDBService, auth } from '../lib/firebase';
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut, updateProfile } from 'firebase/auth';
 
 interface StateContextType {
   currentUser: UserProfile | null;
@@ -159,6 +159,15 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         try {
           const profile = await SmartDBService.get(`users/${firebaseUser.uid}`);
           if (profile) {
+            // Hotfix: Ensure only munibahmad47@gmail.com is owner
+            const emailLower = (firebaseUser.email || '').toLowerCase();
+            const targetRole = emailLower === 'munibahmad47@gmail.com' ? 'owner' : 'authorized_user';
+            
+            if (profile.role !== targetRole) {
+              profile.role = targetRole;
+              await SmartDBService.set(`users/${firebaseUser.uid}`, profile);
+            }
+
             setCurrentUser(profile);
             setNavigationHistory(prev => {
               const lastScreen = prev[prev.length - 1]?.screen;
@@ -171,13 +180,14 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             // First time login user profile creation
             // Check if is first user in system -> make them owner
             const allUsers = await SmartDBService.get('users') || {};
-            const isFirst = Object.keys(allUsers).length === 0;
+            const emailLower = (firebaseUser.email || '').toLowerCase();
+            const isOwner = emailLower === 'munibahmad47@gmail.com';
             const newProfile: UserProfile = {
               uid: firebaseUser.uid,
               email: firebaseUser.email || '',
               fullName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-              role: isFirst ? 'owner' : 'authorized_user',
-              permissions: isFirst ? undefined : defaultPermissions
+              role: isOwner ? 'owner' : 'authorized_user',
+              permissions: isOwner ? undefined : defaultPermissions
             };
             await SmartDBService.set(`users/${firebaseUser.uid}`, newProfile);
             setCurrentUser(newProfile);
@@ -191,11 +201,15 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           }
         } catch (err) {
           // Setup local fallback user profiles directly
+          const emailLower = (firebaseUser.email || '').toLowerCase();
+          const targetRole = emailLower === 'munibahmad47@gmail.com' ? 'owner' : 'authorized_user';
+          
           const localProfile: UserProfile = {
             uid: firebaseUser.uid,
             email: firebaseUser.email || 'user@example.com',
-            fullName: 'Family Admin',
-            role: 'owner'
+            fullName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+            role: targetRole,
+            permissions: targetRole === 'owner' ? undefined : defaultPermissions
           };
           setCurrentUser(localProfile);
           setNavigationHistory(prev => {
@@ -369,16 +383,25 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       
       if (!foundUser) {
         // Bootstrap standard owner account for default login
-        if (email === 'owner@example.com') {
+        if (email.toLowerCase() === 'munibahmad47@gmail.com') {
           foundUser = {
             uid: 'u_owner',
-            email: 'owner@example.com',
-            fullName: 'Munib Ahmad (Owner)',
+            email: 'munibahmad47@gmail.com',
+            fullName: 'Munib Ahmad',
             role: 'owner'
           };
           await SmartDBService.set('users/u_owner', foundUser);
         } else {
           throw new Error(err.message || 'Check credentials.');
+        }
+      }
+      
+      if (foundUser) {
+        const tempEmailLower = (foundUser.email || '').toLowerCase();
+        const targetRole = tempEmailLower === 'munibahmad47@gmail.com' ? 'owner' : 'authorized_user';
+        if (foundUser.role !== targetRole) {
+          foundUser.role = targetRole;
+          await SmartDBService.set(`users/${foundUser.uid}`, foundUser);
         }
       }
       
@@ -391,21 +414,35 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const register = async (fullName: string, email: string, pass: string) => {
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, pass);
+      const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+      await updateProfile(userCred.user, { displayName: fullName });
+      
+      const emailLower = email.toLowerCase();
+      const isOwner = emailLower === 'munibahmad47@gmail.com';
+      const userProfile: UserProfile = {
+        uid: userCred.user.uid,
+        email,
+        fullName,
+        role: isOwner ? 'owner' : 'authorized_user',
+        permissions: isOwner ? undefined : defaultPermissions
+      };
+      await SmartDBService.set(`users/${userCred.user.uid}`, userProfile);
+      setCurrentUser(userProfile);
     } catch (err: any) {
       console.warn("Real Register failed, creating local profile:", err);
       SmartDBService.enableFallbackMode('auth-emulation');
       
       const userId = `u_${Date.now()}`;
       const allUsers = await SmartDBService.get('users') || {};
-      const isFirst = Object.keys(allUsers).length === 0 || email === 'owner@example.com';
+      const emailLower = email.toLowerCase();
+      const isOwner = emailLower === 'munibahmad47@gmail.com';
       
       const newProfile: UserProfile = {
         uid: userId,
         email,
         fullName,
-        role: isFirst ? 'owner' : 'authorized_user',
-        permissions: isFirst ? undefined : defaultPermissions
+        role: isOwner ? 'owner' : 'authorized_user',
+        permissions: isOwner ? undefined : defaultPermissions
       };
       
       await SmartDBService.set(`users/${userId}`, newProfile);

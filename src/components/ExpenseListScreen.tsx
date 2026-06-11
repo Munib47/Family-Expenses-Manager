@@ -347,7 +347,7 @@ export const ExpenseListScreen: React.FC = () => {
                   {exp.details && (
                     <div className="flex flex-col gap-1 mt-2 pt-2 border-t border-gray-50">
                       <span className="text-gray-400">Details / Notes</span>
-                      <span className="text-gray-800 bg-gray-50 p-2 rounded-lg leading-relaxed">{exp.details}</span>
+                      <span className="text-teal-600 bg-transparent py-1 leading-relaxed">{exp.details}</span>
                     </div>
                   )}
                 </div>
