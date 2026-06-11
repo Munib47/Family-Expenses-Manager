@@ -100,7 +100,6 @@ body {
 #phone_view_container .text-gray-500,
 #phone_view_container .text-gray-400,
 #phone_view_container .text-slate-500,
-#phone_view_container .text-slate-400,
 #phone_view_container .text-indigo-500 {
   color: rgba(255, 255, 255, 0.55) !important;
 }
