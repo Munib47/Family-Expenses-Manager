@@ -20,13 +20,15 @@ import { Loader2 } from 'lucide-react';
 
 const CombinedAppContent: React.FC = () => {
   // App Content Force Save
-  const { currentScreen, loading } = useAppState();
+  const { currentScreen, loading, dataLoaded, currentUser } = useAppState();
 
-  if (loading) {
+  if (loading || (currentUser && !dataLoaded)) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center bg-white p-6">
-        <div className="w-12 h-12 rounded-full border-4 border-transparent border-t-indigo-500 border-r-teal-500 border-b-green-500 animate-spin" />
-        <span className="text-sm text-slate-600 font-semibold mt-4">Syncing data...</span>
+        <div className="w-12 h-12 p-1 rounded-full bg-gradient-to-tr from-indigo-500 via-teal-500 to-green-500 animate-spin shadow-lg mt-10">
+          <div className="w-full h-full bg-white rounded-full bg-clip-padding" />
+        </div>
+        <span className="text-sm border-t-0 text-slate-600 font-semibold mt-5">Syncing data from Database...</span>
       </div>
     );
   }
