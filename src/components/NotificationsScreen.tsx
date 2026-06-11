@@ -84,7 +84,7 @@ export const NotificationsScreen: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center p-6"
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm z-10 flex items-center justify-center p-6"
             onClick={() => setSelectedNotif(null)}
           >
             <motion.div
@@ -92,34 +92,34 @@ export const NotificationsScreen: React.FC = () => {
               animate={{ y: 0, scale: 1 }}
               exit={{ y: 20, scale: 0.95 }}
               onClick={e => e.stopPropagation()}
-              className="bg-white border border-gray-200 shadow-xl rounded-2xl w-full max-w-sm p-6 relative"
+              className="bg-black border border-gray-800 shadow-xl rounded-2xl w-full max-w-sm p-6 relative"
             >
               <button 
                 onClick={() => setSelectedNotif(null)}
-                className="absolute top-4 right-4 p-2 bg-gray-50 rounded-full hover:bg-gray-100 text-gray-500 transition"
+                className="absolute top-4 right-4 p-2 bg-gray-900 rounded-full hover:bg-gray-800 text-gray-400 transition"
               >
                 <X className="w-4 h-4" />
               </button>
               
-              <div className="flex items-center gap-3 mb-5 border-b border-gray-100 pb-4">
-                <div className="p-3 bg-red-50 rounded-xl">
+              <div className="flex items-center gap-3 mb-5 border-b border-gray-800 pb-4">
+                <div className="p-3 bg-red-950/40 rounded-xl">
                   <BellRing className="w-5 h-5 text-red-500" />
                 </div>
-                <h3 className="font-bold text-black tracking-tight">
+                <h3 className="font-bold text-white tracking-tight">
                   {selectedNotif.title}
                 </h3>
               </div>
 
-              <div className="space-y-4 text-sm text-gray-600">
+              <div className="space-y-4 text-sm text-gray-400">
                 <div>
-                  <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Details</h4>
-                  <p className="leading-relaxed bg-gray-50 p-3 rounded-lg border border-gray-100 text-teal-600">
+                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Details</h4>
+                  <p className="leading-relaxed bg-gray-900 p-3 rounded-lg border border-gray-800 text-teal-400">
                     {selectedNotif.message}
                   </p>
                 </div>
                 <div>
-                  <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Timestamp</h4>
-                  <p className="font-medium text-gray-700">
+                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Timestamp</h4>
+                  <p className="font-medium text-gray-300">
                     {new Date(selectedNotif.timestamp).toLocaleString()}
                   </p>
                 </div>
@@ -128,7 +128,7 @@ export const NotificationsScreen: React.FC = () => {
               <div className="mt-6">
                 <button
                   onClick={handleClearNotif}
-                  className="w-full py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition"
+                  className="w-full py-2.5 px-4 bg-black hover:bg-gray-900 border border-gray-800 text-red-500 font-bold text-xs rounded-xl transition"
                 >
                   Clear Notification
                 </button>
