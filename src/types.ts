@@ -55,20 +55,20 @@ export interface MonthlyBudget {
   month: string; // YYYY-MM
   amount: number;
   setBy: string;
-  createdAt?: string; // Exact date of setting the budget
-  userEmail?: string; // Email of the user who set the budget
+  createdAt?: string;
+  userEmail?: string;
 }
 
 export interface AppCustomization {
-  bgColor: string; // hex
-  textColor: string; // hex
-  primaryColor: string; // hex
-  btnColor: string; // hex
-  chkColor: string; // hex
-  delBtnColor: string; // hex
-  currency?: string; // PKR, USD, etc.
-  currencyScope?: 'global' | 'specific'; // applies to whole app or specific users
-  userCurrencies?: Record<string, string>; // mapping from user ID to selected currency
+  bgColor: string;
+  textColor: string;
+  primaryColor: string;
+  btnColor: string;
+  chkColor: string;
+  delBtnColor: string;
+  currency?: string;
+  currencyScope?: 'global' | 'specific';
+  userCurrencies?: Record<string, string>;
 }
 
 export interface AppNotification {
@@ -77,4 +77,5 @@ export interface AppNotification {
   message: string;
   timestamp: number;
   read?: boolean;
+  readBy?: string[]; // Array of user UIDs who have read this notification
 }

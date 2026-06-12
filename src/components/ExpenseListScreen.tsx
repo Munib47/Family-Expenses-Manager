@@ -5,18 +5,29 @@ import {
   Plus, 
   Edit3, 
   Trash2,
-  TrendingUp, 
   Bell, 
-  DollarSign, 
   User, 
-  ChevronRight, 
   Wallet,
-  CheckCircle,
-  AlertTriangle,
   Calendar,
   HandCoins
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+
+const GradientSpinner: React.FC<{ label?: string }> = ({ label = 'Loading…' }) => (
+  <div className="flex flex-col items-center justify-center py-10 gap-3">
+    <div className="relative w-10 h-10">
+      <div className="absolute inset-0 rounded-full"
+        style={{
+          background: 'conic-gradient(from 0deg, #2dd4bf, #6366f1, #ec4899, #f59e0b, #2dd4bf)',
+          WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))',
+          mask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))',
+          animation: 'spin 0.9s linear infinite'
+        }}
+      />
+    </div>
+    <span className="text-[11px] font-semibold text-gray-400">{label}</span>
+  </div>
+);
 
 export const ExpenseListScreen: React.FC = () => {
   const { 
@@ -29,22 +40,21 @@ export const ExpenseListScreen: React.FC = () => {
     goBack, 
     navigate, 
     customization,
-    firebaseMode,
+    dataLoading,
     deleteExpense,
-    formatCurrency
+    formatCurrency,
+    markNotificationsRead
   } = useAppState();
 
   const [notifExpanded, setNotifExpanded] = useState(false);
   const [expandedExpenseId, setExpandedExpenseId] = useState<string | null>(null);
 
   const toggleExpand = (id: string) => {
-      setExpandedExpenseId((prev) => (prev === id ? null : id));
+    setExpandedExpenseId((prev) => (prev === id ? null : id));
   };
 
-  // Filter expenses based on active month (YYYY-MM)
   const monthExpenses = expenses.filter(e => e.month === activeMonth);
 
-  // Roles & View Filter: "Each user sees only their own expenses. Owner sees all users' expenses and totals."
   const isOwner = currentUser?.role === 'owner';
   const hasTotalSpendingAccess = isOwner || currentUser?.permissions?.seeTotalSpending;
 
@@ -58,26 +68,21 @@ export const ExpenseListScreen: React.FC = () => {
     return timeB - timeA;
   });
 
-  // Calculations
   const totalAmount = displayExpenses.reduce((sum, e) => sum + e.amount, 0);
   const totalCount = displayExpenses.length;
 
-  // Monthly Budget pacing
-  // For owner: total month budget. For non-owner: sum of given money in that month.
   let currentBudget = 0;
   if (isOwner) {
     const currentBudgetObj = budgets.find(b => b.month === activeMonth);
     currentBudget = currentBudgetObj ? currentBudgetObj.amount : 0;
   } else {
-    // Non-owner: Calculate sum of given money for this month
-     currentBudget = giveMoneyTransactions
+    currentBudget = giveMoneyTransactions
       .filter(tx => tx.userId === currentUser?.uid && tx.date.startsWith(activeMonth))
       .reduce((sum, tx) => sum + tx.amount, 0);
   }
 
   const percentSpent = currentBudget > 0 ? Math.min((totalAmount / currentBudget) * 100, 100) : 0;
 
-  // Human readable month name
   const monthDisplayNames: Record<string, string> = {
     '2026-04': 'April 2026',
     '2026-05': 'May 2026',
@@ -87,12 +92,23 @@ export const ExpenseListScreen: React.FC = () => {
   };
   const readableMonth = monthDisplayNames[activeMonth] || activeMonth;
 
-  // Notification for Owner only (Step #8)
-  const ownerNotifications = notifications.filter(n => n.title.includes('Updated') || n.title.includes('Expense'));
+  // Only count notifications NOT yet read by current user
+  const uid = currentUser?.uid || '';
+  const ownerNotifications = notifications.filter(n =>
+    n.title.includes('Updated') || n.title.includes('Expense') || n.title.includes('Deleted')
+  );
+  const unreadCount = ownerNotifications.filter(n => !(n.readBy || []).includes(uid)).length;
+
+  const handleBellClick = async () => {
+    const opening = !notifExpanded;
+    setNotifExpanded(opening);
+    if (opening && unreadCount > 0) {
+      await markNotificationsRead();
+    }
+  };
 
   const accentColor = isOwner ? customization.primaryColor : '#22c55e';
   const deleteBtnColor = isOwner ? customization.delBtnColor : '#ef4444';
-  const customBtnColor = isOwner ? customization.btnColor : '#000000';
 
   return (
     <motion.div 
@@ -114,17 +130,17 @@ export const ExpenseListScreen: React.FC = () => {
           <Calendar className="w-4 h-4 stroke-[2.5]" />
           {readableMonth}
         </span>
-        {/* Quick notification bell for Owner (Step 8 Indicator) */}
+        {/* Bell — badge shows ONLY unread count, clears when panel opens */}
         {isOwner && (
           <div className="relative">
             <button 
-              onClick={() => setNotifExpanded(!notifExpanded)}
+              onClick={handleBellClick}
               className="p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-600 transition flex items-center justify-center border border-amber-100"
             >
               <Bell className="w-4 h-4" />
-              {ownerNotifications.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold rounded-full w-4.5 h-4.5 text-[9px] flex items-center justify-center animate-bounce">
-                  {ownerNotifications.length}
+              {unreadCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white font-bold rounded-full min-w-[18px] h-[18px] text-[9px] flex items-center justify-center px-0.5 animate-bounce">
+                  {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
             </button>
@@ -132,48 +148,59 @@ export const ExpenseListScreen: React.FC = () => {
         )}
       </div>
 
-      {/* STEP 8: VIEW OWNER NOTIFICATIONS IN-APP PANEL */}
-      {isOwner && notifExpanded && ownerNotifications.length > 0 && (
-        <motion.div 
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-4 p-4 border border-amber-100 bg-gradient-to-br from-amber-50/70 to-orange-50/40 rounded-2xl relative shadow-sm"
-        >
-          <div className="flex items-center gap-1.5 text-xs text-amber-700 font-bold mb-2">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
-            🔔 Owner Notification (In-App)
-          </div>
-          <div className="divide-y divide-amber-100 max-h-[220px] overflow-y-auto">
-            {ownerNotifications.map((notif) => (
-              <div key={notif.id} className="py-2.5 text-xs first:pt-0 last:pb-0">
-                <span className="font-semibold text-amber-800 uppercase text-[9px] bg-amber-100/60 px-1.5 py-0.5 rounded tracking-wider">
-                  Expense Updated
-                </span>
-                <p className="text-gray-700 mt-1.5 leading-relaxed font-medium">
-                  {notif.message}
-                </p>
-                <span className="block text-[10px] text-gray-400 mt-1">
-                  {new Date(notif.timestamp).toLocaleString('en-IN', {
-                    day: '2-digit', month: 'short', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit', hour12: true
-                  })}
-                </span>
+      {/* Owner notification dropdown panel */}
+      <AnimatePresence>
+        {isOwner && notifExpanded && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="mb-4 p-4 border border-amber-100 bg-gradient-to-br from-amber-50/70 to-orange-50/40 rounded-2xl relative shadow-sm"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5 text-xs text-amber-700 font-bold">
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                🔔 Notifications
               </div>
-            ))}
-          </div>
-          <div className="mt-3 flex gap-2">
-            <button 
-              onClick={() => alert('The latest update logs reflect detailed category edits directly in the records list below.')}
-              className="flex-1 py-1 px-3 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-semibold text-[11px] rounded-xl transition"
-            >
-              View Details
-            </button>
-          </div>
-        </motion.div>
-      )}
+              <button
+                onClick={() => navigate('notifications')}
+                className="text-[10px] text-teal-600 font-bold underline underline-offset-2"
+              >
+                View All
+              </button>
+            </div>
+            {ownerNotifications.length === 0 ? (
+              <p className="text-xs text-gray-400 py-2 text-center">No notifications yet.</p>
+            ) : (
+              <div className="divide-y divide-amber-100 max-h-[220px] overflow-y-auto">
+                {ownerNotifications.slice(0, 10).map((notif) => (
+                  <div key={notif.id} className="py-2.5 text-xs first:pt-0 last:pb-0">
+                    <span className="font-semibold text-amber-800 uppercase text-[9px] bg-amber-100/60 px-1.5 py-0.5 rounded tracking-wider">
+                      {notif.title}
+                    </span>
+                    <p className="text-gray-700 mt-1.5 leading-relaxed font-medium">
+                      {notif.message}
+                    </p>
+                    <span className="block text-[10px] text-gray-400 mt-1">
+                      {new Date(notif.timestamp).toLocaleString('en-IN', {
+                        day: '2-digit', month: 'short', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit', hour12: true
+                      })}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Header totals card */}
-      {hasTotalSpendingAccess ? (
+      {/* Summary card */}
+      {dataLoading ? (
+        <div className="bg-slate-50 border border-slate-100 rounded-2xl mb-4">
+          <GradientSpinner label="Syncing expenses…" />
+        </div>
+      ) : hasTotalSpendingAccess ? (
         <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4 shadow-xs relative overflow-hidden">
           <div className="absolute top-0 right-0 w-24 h-24 bg-green-500/5 rounded-full -mr-6 -mt-6" />
           <span className="text-xs font-extrabold text-black uppercase tracking-wider block">
@@ -191,11 +218,8 @@ export const ExpenseListScreen: React.FC = () => {
                 )}
               </span>
             </div>
-            
-            {/* Quick set budget action for owner/allowed user */}
             {(isOwner || currentUser?.permissions?.addBudget) && (
               <button 
-                id="budget_setup_link"
                 onClick={() => navigate('budget-set')}
                 className="text-xs font-semibold hover:underline flex items-center gap-1"
                 style={{ color: accentColor }}
@@ -205,8 +229,6 @@ export const ExpenseListScreen: React.FC = () => {
               </button>
             )}
           </div>
-
-          {/* Budget Progress bar */}
           {currentBudget > 0 && (
             <div className="mt-4 pt-3 border-t border-slate-100">
               <div className="flex justify-between text-[11px] text-slate-400 font-medium mb-1">
@@ -226,7 +248,6 @@ export const ExpenseListScreen: React.FC = () => {
           )}
         </div>
       ) : (
-        // For standard non-privileged user who can't see total spending
         <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4">
           <span className="text-xs font-extrabold text-black uppercase tracking-wider block">
             Your Personal Ledger
@@ -245,7 +266,7 @@ export const ExpenseListScreen: React.FC = () => {
         </div>
       )}
 
-      {/* Action buttons (Add Expense & Give Money) */}
+      {/* Action bar */}
       <div className="flex justify-between items-center mb-4 mt-2">
         <h3 className="font-extrabold text-gray-900 text-lg tracking-tight">Expense List</h3>
         <div className="flex gap-2">
@@ -259,7 +280,6 @@ export const ExpenseListScreen: React.FC = () => {
             </button>
           )}
           <button 
-            id="add_expense_btn"
             onClick={() => navigate('add-expense')}
             className="flex items-center gap-1.5 px-3 py-2.5 bg-black text-white font-bold text-sm rounded-xl transition shadow-md hover:shadow-lg active:scale-[0.97]"
           >
@@ -269,9 +289,11 @@ export const ExpenseListScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Expenses items array list (Step #5 & #6 edit icons) */}
+      {/* Expenses list */}
       <div className="flex-1 overflow-y-auto space-y-2.5 max-h-[460px] pr-1">
-        {displayExpenses.length === 0 ? (
+        {dataLoading ? (
+          <GradientSpinner label="Loading expenses…" />
+        ) : displayExpenses.length === 0 ? (
           <div className="border border-dashed border-gray-100 rounded-2xl py-12 text-center">
             <p className="text-gray-400 text-xs">No expenses logged for {readableMonth} yet.</p>
             <button 
@@ -326,36 +348,29 @@ export const ExpenseListScreen: React.FC = () => {
                       </span>
                     )}
                   </div>
-
-                  {/* Edit Icon Button */}
                   <button 
                     onClick={(e) => { e.stopPropagation(); navigate('add-expense', { editId: exp.id }); }}
                     className="p-1 px-1.5 rounded-lg border border-gray-100 hover:bg-gray-50 text-gray-500 hover:text-gray-900 transition flex items-center justify-center"
-                    title="Edit record"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
                   </button>
-
-                  {/* Delete Icon Button */}
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (confirm(`Are you sure you want to delete this expense of ${formatCurrency(exp.amount, exp.userId)}?`)) {
+                      if (confirm(`Delete this expense of ${formatCurrency(exp.amount, exp.userId)}?`)) {
                         deleteExpense(exp.id);
                       }
                     }}
-                    className="p-1 px-1.5 rounded-lg border border-red-50 hover:bg-red-50 text-red-500 transition flex items-center justify-center"
+                    className="p-1 px-1.5 rounded-lg border border-red-50 hover:bg-red-50 transition flex items-center justify-center"
                     style={{ color: deleteBtnColor }}
-                    title="Delete record"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
 
-              {/* Expanded details section */}
               {expandedExpenseId === exp.id && (
-                <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-600 space-y-2 animate-in fade-in transition">
+                <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-600 space-y-2">
                   <div className="flex justify-between">
                     <span className="text-gray-400">Title</span>
                     <span className="font-semibold text-gray-900">{exp.title}</span>
@@ -366,12 +381,16 @@ export const ExpenseListScreen: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">Date</span>
-                    <span className="font-semibold text-gray-900">{new Date(exp.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                    <span className="font-semibold text-gray-900">
+                      {new Date(exp.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </span>
                   </div>
                   {exp.createdAt && (
                     <div className="flex justify-between">
                       <span className="text-gray-400">Time</span>
-                      <span className="font-semibold text-gray-900">{new Date(exp.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                      <span className="font-semibold text-gray-900">
+                        {new Date(exp.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
                     </div>
                   )}
                   <div className="flex justify-between">
@@ -381,7 +400,7 @@ export const ExpenseListScreen: React.FC = () => {
                   {exp.details && (
                     <div className="flex flex-col gap-1 mt-2 pt-2 border-t border-gray-50">
                       <span className="text-gray-400">Details / Notes</span>
-                      <span className="text-teal-600 bg-transparent py-1 leading-relaxed">{exp.details}</span>
+                      <span className="text-teal-600 py-1 leading-relaxed">{exp.details}</span>
                     </div>
                   )}
                 </div>
@@ -391,7 +410,7 @@ export const ExpenseListScreen: React.FC = () => {
         )}
       </div>
 
-      {/* Visual Role helper */}
+      {/* Footer */}
       <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-400 font-medium">
         <span>Logged in: <strong className="text-gray-600">{currentUser?.email}</strong></span>
         <span>Role: <strong className="text-gray-600 capitalize">{currentUser?.role}</strong></span>

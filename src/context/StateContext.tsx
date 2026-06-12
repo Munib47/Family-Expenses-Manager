@@ -22,24 +22,21 @@ interface StateContextType {
   notifications: AppNotification[];
   customization: AppCustomization;
   loading: boolean;
-  activeMonth: string; // YYYY-MM
-  currentScreen: string; // Screen ID
-  currentScreenParams: any; // navigation params
-  activeFlow: 'expense' | 'buy' | null; // Selected flow option
+  activeMonth: string;
+  currentScreen: string;
+  currentScreenParams: any;
+  activeFlow: 'expense' | 'buy' | null;
   firebaseMode: 'firebase' | 'local';
   
-  // Auth methods
   login: (email: string, pass: string) => Promise<void>;
   register: (fullName: string, email: string, pass: string) => Promise<void>;
   logout: () => Promise<void>;
   
-  // Navigation
   navigate: (screen: string, params?: any) => void;
   goBack: () => void;
   setActiveMonth: (month: string) => void;
   setActiveFlow: (flow: 'expense' | 'buy' | null) => void;
 
-  // DB Methods
   addExpense: (expense: Omit<Expense, 'id' | 'userId' | 'userEmail' | 'userName' | 'month'>) => Promise<void>;
   editExpense: (id: string, expense: Partial<Expense>) => Promise<void>;
   deleteExpense: (id: string) => Promise<void>;
@@ -54,8 +51,9 @@ interface StateContextType {
   updateCustomization: (custom: Partial<AppCustomization>) => Promise<void>;
   addNotification: (title: string, message: string) => Promise<void>;
   clearNotifications: () => Promise<void>;
+  markNotificationsRead: () => Promise<void>;
+  dataLoading: boolean;
   
-  // Currency helpers
   getCurrencySymbol: (uid?: string) => string;
   formatCurrency: (amount: number, uid?: string) => string;
   clearAllDummyData: () => Promise<void>;
@@ -64,10 +62,10 @@ interface StateContextType {
 const defaultCustomization: AppCustomization = {
   bgColor: '#ffffff',
   textColor: '#000000',
-  primaryColor: '#2dd4bf', // Teal accent is beautiful
+  primaryColor: '#2dd4bf',
   btnColor: '#ffffff',
   chkColor: '#2dd4bf',
-  delBtnColor: '#ef4444', // red-500
+  delBtnColor: '#ef4444',
   currency: 'PKR',
   currencyScope: 'global',
   userCurrencies: {},
@@ -99,9 +97,9 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [customization, setCustomization] = useState<AppCustomization>(defaultCustomization);
   const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
   const [firebaseMode, setFirebaseMode] = useState<'firebase' | 'local'>('firebase');
   
-  // Navigation stack
   const [navigationHistory, setNavigationHistory] = useState<Array<{ screen: string; params: any }>>(() => {
     const saved = sessionStorage.getItem('navigationHistory');
     return saved ? JSON.parse(saved) : [{ screen: 'login', params: {} }];
@@ -110,9 +108,8 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const currentScreen = currentScreenState.screen;
   const currentScreenParams = currentScreenState.params;
 
-  // Selected state
   const [activeMonth, setActiveMonth] = useState<string>(() => {
-    return sessionStorage.getItem('activeMonth') || '2026-06'; // June 2026 as default from flow
+    return sessionStorage.getItem('activeMonth') || '2026-06';
   });
   const [activeFlow, setActiveFlow] = useState<'expense' | 'buy' | null>(() => {
     const saved = sessionStorage.getItem('activeFlow');
@@ -143,7 +140,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [currentUser]);
 
-  // Sync mode based on service fallback
   useEffect(() => {
     const checkInterval = setInterval(() => {
       setFirebaseMode(SmartDBService.isFallbackActive() ? 'local' : 'firebase');
@@ -151,23 +147,18 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return () => clearInterval(checkInterval);
   }, []);
 
-  // Handle Firebaseauth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        // Fetch original user details from Realtime Database
         try {
           const profile = await SmartDBService.get(`users/${firebaseUser.uid}`);
           if (profile) {
-            // Hotfix: Ensure only munibahmad47@gmail.com is owner
             const emailLower = (firebaseUser.email || '').toLowerCase();
             const targetRole = emailLower === 'munibahmad47@gmail.com' ? 'owner' : 'authorized_user';
-            
             if (profile.role !== targetRole) {
               profile.role = targetRole;
               await SmartDBService.set(`users/${firebaseUser.uid}`, profile);
             }
-
             setCurrentUser(profile);
             setNavigationHistory(prev => {
               const lastScreen = prev[prev.length - 1]?.screen;
@@ -177,9 +168,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               return prev;
             });
           } else {
-            // First time login user profile creation
-            // Check if is first user in system -> make them owner
-            const allUsers = await SmartDBService.get('users') || {};
             const emailLower = (firebaseUser.email || '').toLowerCase();
             const isOwner = emailLower === 'munibahmad47@gmail.com';
             const newProfile: UserProfile = {
@@ -200,10 +188,8 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             });
           }
         } catch (err) {
-          // Setup local fallback user profiles directly
           const emailLower = (firebaseUser.email || '').toLowerCase();
           const targetRole = emailLower === 'munibahmad47@gmail.com' ? 'owner' : 'authorized_user';
-          
           const localProfile: UserProfile = {
             uid: firebaseUser.uid,
             email: firebaseUser.email || 'user@example.com',
@@ -239,11 +225,17 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return () => unsubscribe();
   }, []);
 
-  // Database listeners - only trigger when user is authenticated
+  // Database listeners — starts dataLoading=true, flips false after all 7 fire
   useEffect(() => {
     if (!currentUser) return;
+    setDataLoading(true);
+    let loadedCount = 0;
+    const totalSources = 7;
+    const markLoaded = () => {
+      loadedCount++;
+      if (loadedCount >= totalSources) setDataLoading(false);
+    };
 
-    // 1. Sync User list
     const unsubUsers = SmartDBService.onValue('users', (data) => {
       if (data) {
         const uList: UserProfile[] = Object.values(data);
@@ -251,9 +243,9 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       } else {
         setUsers([]);
       }
+      markLoaded();
     });
 
-    // 2. Sync Expenses
     const unsubExpenses = SmartDBService.onValue('expenses', (data) => {
       if (data) {
         const eList: Expense[] = Object.keys(data).map(key => ({
@@ -264,9 +256,9 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       } else {
         setExpenses([]);
       }
+      markLoaded();
     });
 
-    // 3. Sync Want to Buy Items
     const unsubBuy = SmartDBService.onValue('wantToBuy', (data) => {
       if (data) {
         const bList: WantToBuyItem[] = Object.keys(data).map(key => ({
@@ -277,9 +269,9 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       } else {
         setWantToBuyItems([]);
       }
+      markLoaded();
     });
 
-    // 4. Sync Special Transactions
     const unsubTx = SmartDBService.onValue('transactions', (data) => {
       if (data) {
         const tList: GiveMoneyTransaction[] = Object.values(data);
@@ -287,9 +279,9 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       } else {
         setGiveMoneyTransactions([]);
       }
+      markLoaded();
     });
 
-    // 5. Sync Budgets
     const unsubBudgets = SmartDBService.onValue('budgets', (data) => {
       if (data) {
         const bList: MonthlyBudget[] = Object.values(data);
@@ -297,25 +289,26 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       } else {
         setBudgets([]);
       }
+      markLoaded();
     });
 
-    // 6. Sync Customizations
     const unsubCustom = SmartDBService.onValue('customization', (data) => {
       if (data) {
         setCustomization({ ...defaultCustomization, ...data });
       } else {
         setCustomization(defaultCustomization);
       }
+      markLoaded();
     });
 
-    // 7. Sync Notifications
     const unsubNotifications = SmartDBService.onValue('notifications', (data) => {
       if (data) {
         const nList: AppNotification[] = Object.values(data);
-        setNotifications(nList.sort((a,b) => b.timestamp - a.timestamp));
+        setNotifications(nList.sort((a, b) => b.timestamp - a.timestamp));
       } else {
         setNotifications([]);
       }
+      markLoaded();
     });
 
     return () => {
@@ -329,7 +322,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [currentUser]);
 
-  // Currency logic implementation
   const getCurrencySymbol = (uid?: string): string => {
     if (customization.currencyScope === 'specific' && uid && customization.userCurrencies?.[uid]) {
       return customization.userCurrencies[uid];
@@ -347,9 +339,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     await SmartDBService.set('wantToBuy', null);
     await SmartDBService.set('transactions', null);
     await SmartDBService.set('budgets', null);
-    
-    // Also remove seeded demo users but keep the logged-in user profile
-    const allUsers = await SmartDBService.get('users') || {};
     const filteredUsers: Record<string, any> = {};
     if (currentUser) {
       filteredUsers[currentUser.uid] = currentUser;
@@ -357,7 +346,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     await SmartDBService.set('users', filteredUsers);
   };
 
-  // Navigation handlers
   const navigate = (screen: string, params: any = {}) => {
     setNavigationHistory(prev => [...prev, { screen, params }]);
   };
@@ -368,7 +356,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  // Auth Operations
   const login = async (email: string, pass: string) => {
     setLoading(true);
     try {
@@ -377,13 +364,10 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (err.code !== 'auth/operation-not-allowed') {
         console.warn("Real Auth failed, using smart browser emulation:", err);
       }
-      // Fallback auth emulation
       SmartDBService.enableFallbackMode('auth-emulation');
       const allRegisteredUsers = await SmartDBService.get('users') || {};
       let foundUser = Object.values(allRegisteredUsers).find((u: any) => u.email === email) as UserProfile | undefined;
-      
       if (!foundUser) {
-        // Bootstrap standard owner account for default login
         if (email.toLowerCase() === 'munibahmad47@gmail.com') {
           foundUser = {
             uid: 'u_owner',
@@ -396,7 +380,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           throw new Error(err.message || 'Check credentials.');
         }
       }
-      
       if (foundUser) {
         const tempEmailLower = (foundUser.email || '').toLowerCase();
         const targetRole = tempEmailLower === 'munibahmad47@gmail.com' ? 'owner' : 'authorized_user';
@@ -405,7 +388,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           await SmartDBService.set(`users/${foundUser.uid}`, foundUser);
         }
       }
-      
       setCurrentUser(foundUser);
       navigate('choose-option');
       setLoading(false);
@@ -417,7 +399,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       const userCred = await createUserWithEmailAndPassword(auth, email, pass);
       await updateProfile(userCred.user, { displayName: fullName });
-      
       const emailLower = email.toLowerCase();
       const isOwner = emailLower === 'munibahmad47@gmail.com';
       const userProfile: UserProfile = {
@@ -434,12 +415,9 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.warn("Real Register failed, creating local profile:", err);
       }
       SmartDBService.enableFallbackMode('auth-emulation');
-      
       const userId = `u_${Date.now()}`;
-      const allUsers = await SmartDBService.get('users') || {};
       const emailLower = email.toLowerCase();
       const isOwner = emailLower === 'munibahmad47@gmail.com';
-      
       const newProfile: UserProfile = {
         uid: userId,
         email,
@@ -447,7 +425,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         role: isOwner ? 'owner' : 'authorized_user',
         permissions: isOwner ? undefined : defaultPermissions
       };
-      
       await SmartDBService.set(`users/${userId}`, newProfile);
       setCurrentUser(newProfile);
       navigate('choose-option');
@@ -467,7 +444,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setLoading(false);
   };
 
-  // Database additions
   const addExpense = async (expenseData: any) => {
     if (!currentUser) return;
     const finalData = {
@@ -478,10 +454,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       month: activeMonth,
       createdAt: Date.now()
     };
-
-    const expId = await SmartDBService.push('expenses', finalData);
-    
-    // Trigger notification
+    await SmartDBService.push('expenses', finalData);
     const formattedAmount = formatCurrency(expenseData.amount, currentUser.uid);
     await addNotification(
       'Expense Added',
@@ -493,15 +466,8 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!currentUser) return;
     const existingExp = expenses.find(e => e.id === id);
     if (!existingExp) return;
-
-    const updated = {
-      ...existingExp,
-      ...expenseData
-    };
-
+    const updated = { ...existingExp, ...expenseData };
     await SmartDBService.set(`expenses/${id}`, updated);
-
-    // Trigger Notification for updates (view 8 in flow)
     const formattedOld = formatCurrency(existingExp.amount, existingExp.userId);
     const formattedNew = formatCurrency(expenseData.amount, existingExp.userId);
     await addNotification(
@@ -514,10 +480,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!currentUser) return;
     const existingExp = expenses.find(e => e.id === id);
     if (!existingExp) return;
-
     await SmartDBService.remove(`expenses/${id}`);
-
-    // Trigger Notification for deletes so the owner gets notified
     const formattedAmount = formatCurrency(existingExp.amount, existingExp.userId);
     await addNotification(
       'Expense Deleted',
@@ -569,7 +532,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const addGiveMoneyTransaction = async (userId: string, amount: number, purpose: string, date: string) => {
     const selectedUser = users.find(u => u.uid === userId);
     if (!selectedUser) return;
-
     const newTx = {
       userId,
       userName: selectedUser.fullName,
@@ -579,7 +541,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       date,
       addedBy: currentUser?.fullName || 'Owner'
     };
-
     await SmartDBService.push('transactions', newTx);
   };
 
@@ -605,9 +566,25 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       title,
       message,
       timestamp: Date.now(),
-      read: false
+      read: false,
+      readBy: []
     };
     await SmartDBService.push('notifications', newNotif);
+  };
+
+  // Mark all notifications as read by the current user — persisted to DB
+  const markNotificationsRead = async () => {
+    if (!currentUser) return;
+    const uid = currentUser.uid;
+    const unreadOnes = notifications.filter(n => !(n.readBy || []).includes(uid));
+    for (const notif of unreadOnes) {
+      const updated: AppNotification = {
+        ...notif,
+        readBy: [...(notif.readBy || []), uid],
+        read: true
+      };
+      await SmartDBService.set(`notifications/${notif.id}`, updated);
+    }
   };
 
   const clearNotifications = async () => {
@@ -654,10 +631,12 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       updateCustomization,
       addNotification,
       clearNotifications,
+      markNotificationsRead,
       
       getCurrencySymbol,
       formatCurrency,
-      clearAllDummyData
+      clearAllDummyData,
+      dataLoading
     }}>
       {children}
     </StateContext.Provider>
