@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
+// Gradient spinner shown over containers while Firebase data loads
 const GradientSpinner: React.FC<{ label?: string }> = ({ label = 'Loading…' }) => (
   <div className="flex flex-col items-center justify-center py-10 gap-3">
     <div className="relative w-10 h-10">
@@ -53,8 +54,10 @@ export const ExpenseListScreen: React.FC = () => {
     setExpandedExpenseId((prev) => (prev === id ? null : id));
   };
 
+  // Filter expenses based on active month (YYYY-MM)
   const monthExpenses = expenses.filter(e => e.month === activeMonth);
 
+  // Roles & View Filter
   const isOwner = currentUser?.role === 'owner';
   const hasTotalSpendingAccess = isOwner || currentUser?.permissions?.seeTotalSpending;
 
@@ -62,12 +65,21 @@ export const ExpenseListScreen: React.FC = () => {
     ? monthExpenses 
     : monthExpenses.filter(e => e.userId === currentUser?.uid);
 
+  // ── Sort logic ────────────────────────────────────────────────────────────
+  // Primary  : user-selected date (YYYY-MM-DD) — latest date shown first.
+  //            A backdated expense (e.g. Jun 7, entered today Jun 12) sorts
+  //            between Jun 6 and Jun 8 entries, NOT at the top.
+  // Tiebreaker: two expenses on the same date → the one entered most recently
+  //            (higher createdAt timestamp) appears first.
   displayExpenses = [...displayExpenses].sort((a, b) => {
-    const timeA = a.createdAt || new Date(a.date).getTime();
-    const timeB = b.createdAt || new Date(b.date).getTime();
-    return timeB - timeA;
+    if (b.date !== a.date) return b.date.localeCompare(a.date);
+    const tsA = a.createdAt ?? 0;
+    const tsB = b.createdAt ?? 0;
+    return tsB - tsA;
   });
+  // ─────────────────────────────────────────────────────────────────────────
 
+  // Calculations
   const totalAmount = displayExpenses.reduce((sum, e) => sum + e.amount, 0);
   const totalCount = displayExpenses.length;
 
@@ -92,7 +104,7 @@ export const ExpenseListScreen: React.FC = () => {
   };
   const readableMonth = monthDisplayNames[activeMonth] || activeMonth;
 
-  // Only count notifications NOT yet read by current user
+  // ── Notification badge logic ──────────────────────────────────────────────
   const uid = currentUser?.uid || '';
   const ownerNotifications = notifications.filter(n =>
     n.title.includes('Updated') || n.title.includes('Expense') || n.title.includes('Deleted')
@@ -106,6 +118,7 @@ export const ExpenseListScreen: React.FC = () => {
       await markNotificationsRead();
     }
   };
+  // ─────────────────────────────────────────────────────────────────────────
 
   const accentColor = isOwner ? customization.primaryColor : '#22c55e';
   const deleteBtnColor = isOwner ? customization.delBtnColor : '#ef4444';
@@ -130,7 +143,7 @@ export const ExpenseListScreen: React.FC = () => {
           <Calendar className="w-4 h-4 stroke-[2.5]" />
           {readableMonth}
         </span>
-        {/* Bell — badge shows ONLY unread count, clears when panel opens */}
+        {/* Bell icon — badge shows ONLY unread count; clears when opened */}
         {isOwner && (
           <div className="relative">
             <button 
@@ -148,7 +161,7 @@ export const ExpenseListScreen: React.FC = () => {
         )}
       </div>
 
-      {/* Owner notification dropdown panel */}
+      {/* Owner notification panel */}
       <AnimatePresence>
         {isOwner && notifExpanded && (
           <motion.div 
@@ -169,6 +182,7 @@ export const ExpenseListScreen: React.FC = () => {
                 View All
               </button>
             </div>
+
             {ownerNotifications.length === 0 ? (
               <p className="text-xs text-gray-400 py-2 text-center">No notifications yet.</p>
             ) : (
@@ -195,7 +209,7 @@ export const ExpenseListScreen: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Summary card */}
+      {/* Header totals card */}
       {dataLoading ? (
         <div className="bg-slate-50 border border-slate-100 rounded-2xl mb-4">
           <GradientSpinner label="Syncing expenses…" />
@@ -266,7 +280,7 @@ export const ExpenseListScreen: React.FC = () => {
         </div>
       )}
 
-      {/* Action bar */}
+      {/* Action buttons */}
       <div className="flex justify-between items-center mb-4 mt-2">
         <h3 className="font-extrabold text-gray-900 text-lg tracking-tight">Expense List</h3>
         <div className="flex gap-2">
@@ -351,18 +365,20 @@ export const ExpenseListScreen: React.FC = () => {
                   <button 
                     onClick={(e) => { e.stopPropagation(); navigate('add-expense', { editId: exp.id }); }}
                     className="p-1 px-1.5 rounded-lg border border-gray-100 hover:bg-gray-50 text-gray-500 hover:text-gray-900 transition flex items-center justify-center"
+                    title="Edit record"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
                   </button>
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (confirm(`Delete this expense of ${formatCurrency(exp.amount, exp.userId)}?`)) {
+                      if (confirm(`Are you sure you want to delete this expense of ${formatCurrency(exp.amount, exp.userId)}?`)) {
                         deleteExpense(exp.id);
                       }
                     }}
                     className="p-1 px-1.5 rounded-lg border border-red-50 hover:bg-red-50 transition flex items-center justify-center"
                     style={{ color: deleteBtnColor }}
+                    title="Delete record"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -370,7 +386,7 @@ export const ExpenseListScreen: React.FC = () => {
               </div>
 
               {expandedExpenseId === exp.id && (
-                <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-600 space-y-2">
+                <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-600 space-y-2 animate-in fade-in transition">
                   <div className="flex justify-between">
                     <span className="text-gray-400">Title</span>
                     <span className="font-semibold text-gray-900">{exp.title}</span>
@@ -400,7 +416,7 @@ export const ExpenseListScreen: React.FC = () => {
                   {exp.details && (
                     <div className="flex flex-col gap-1 mt-2 pt-2 border-t border-gray-50">
                       <span className="text-gray-400">Details / Notes</span>
-                      <span className="text-teal-600 py-1 leading-relaxed">{exp.details}</span>
+                      <span className="text-teal-600 bg-transparent py-1 leading-relaxed">{exp.details}</span>
                     </div>
                   )}
                 </div>
