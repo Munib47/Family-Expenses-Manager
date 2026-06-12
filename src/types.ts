@@ -37,7 +37,7 @@ export interface WantToBuyItem {
   checked: boolean;
   userId: string;
   userName: string;
-  month: string; // e.g. "June 2026" or YYYY-MM
+  month: string;
 }
 
 export interface GiveMoneyTransaction {
@@ -77,5 +77,17 @@ export interface AppNotification {
   message: string;
   timestamp: number;
   read?: boolean;
-  readBy?: string[]; // Array of user UIDs who have read this notification
+  readBy?: string[];
+}
+
+export interface GiveTakeRecord {
+  id: string;
+  type: 'give' | 'take'; // give = loaned out to someone, take = borrowed from someone
+  title: string;
+  personName: string;   // who you gave to / took from
+  amount: number;
+  date: string;         // YYYY-MM-DD (user-selected, drives sort order)
+  details?: string;
+  createdAt: number;    // server push timestamp — used only as same-day tiebreaker
+  addedBy: string;      // owner uid
 }

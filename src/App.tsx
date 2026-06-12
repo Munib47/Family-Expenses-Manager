@@ -16,10 +16,10 @@ import { CustomizationScreen } from './components/CustomizationScreen';
 import { ManageUsersScreen } from './components/ManageUsersScreen';
 import { PermissionsScreen } from './components/PermissionsScreen';
 import { NotificationsScreen } from './components/NotificationsScreen';
-import { Loader2 } from 'lucide-react';
+import { GiveTakeScreen } from './components/GiveTakeScreen';
+import { AddEditGiveTakeScreen } from './components/AddEditGiveTakeScreen';
 
 const CombinedAppContent: React.FC = () => {
-  // App Content Force Save
   const { currentScreen, loading } = useAppState();
 
   if (loading) {
@@ -31,7 +31,6 @@ const CombinedAppContent: React.FC = () => {
     );
   }
 
-  // Routing manager based on current screen ID
   switch (currentScreen) {
     case 'login':
       return <LoginScreen />;
@@ -63,6 +62,10 @@ const CombinedAppContent: React.FC = () => {
       return <NotificationsScreen />;
     case 'permissions-set':
       return <PermissionsScreen />;
+    case 'give-take':
+      return <GiveTakeScreen />;
+    case 'add-give-take':
+      return <AddEditGiveTakeScreen />;
     default:
       return <LoginScreen />;
   }

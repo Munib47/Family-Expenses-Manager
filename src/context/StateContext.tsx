@@ -7,7 +7,8 @@ import {
   MonthlyBudget, 
   AppCustomization, 
   AppNotification,
-  UserPermissions
+  UserPermissions,
+  GiveTakeRecord
 } from '../types';
 import { SmartDBService, auth } from '../lib/firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut, updateProfile } from 'firebase/auth';
@@ -53,6 +54,11 @@ interface StateContextType {
   clearNotifications: () => Promise<void>;
   markNotificationsRead: () => Promise<void>;
   dataLoading: boolean;
+
+  giveTakeRecords: GiveTakeRecord[];
+  addGiveTakeRecord: (record: Omit<GiveTakeRecord, 'id' | 'createdAt' | 'addedBy'>) => Promise<void>;
+  editGiveTakeRecord: (id: string, data: Partial<GiveTakeRecord>) => Promise<void>;
+  deleteGiveTakeRecord: (id: string) => Promise<void>;
   
   getCurrencySymbol: (uid?: string) => string;
   formatCurrency: (amount: number, uid?: string) => string;
@@ -95,6 +101,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [giveMoneyTransactions, setGiveMoneyTransactions] = useState<GiveMoneyTransaction[]>([]);
   const [budgets, setBudgets] = useState<MonthlyBudget[]>([]);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [giveTakeRecords, setGiveTakeRecords] = useState<GiveTakeRecord[]>([]);
   const [customization, setCustomization] = useState<AppCustomization>(defaultCustomization);
   const [loading, setLoading] = useState(true);
   const [dataLoading, setDataLoading] = useState(true);
@@ -221,20 +228,21 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       console.warn("Auth state error:", error);
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
-  // Database listeners — starts dataLoading=true, flips false after all 7 fire
+  // Database listeners
   useEffect(() => {
     if (!currentUser) return;
     setDataLoading(true);
     let loadedCount = 0;
-    const totalSources = 7;
+    const totalSources = 8;
     const markLoaded = () => {
       loadedCount++;
       if (loadedCount >= totalSources) setDataLoading(false);
     };
+    // Safety: force-clear loading after 4s if any path doesn't exist yet in Firebase
+    const safetyTimer = setTimeout(() => setDataLoading(false), 4000);
 
     const unsubUsers = SmartDBService.onValue('users', (data) => {
       if (data) {
@@ -311,7 +319,21 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       markLoaded();
     });
 
+    const unsubGiveTake = SmartDBService.onValue('giveTake', (data) => {
+      if (data) {
+        const list: GiveTakeRecord[] = Object.keys(data).map(key => ({
+          ...data[key],
+          id: data[key].id || key
+        }));
+        setGiveTakeRecords(list);
+      } else {
+        setGiveTakeRecords([]);
+      }
+      markLoaded();
+    });
+
     return () => {
+      clearTimeout(safetyTimer);
       unsubUsers();
       unsubExpenses();
       unsubBuy();
@@ -319,6 +341,7 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       unsubBudgets();
       unsubCustom();
       unsubNotifications();
+      unsubGiveTake();
     };
   }, [currentUser]);
 
@@ -572,7 +595,6 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     await SmartDBService.push('notifications', newNotif);
   };
 
-  // Mark all notifications as read by the current user — persisted to DB
   const markNotificationsRead = async () => {
     if (!currentUser) return;
     const uid = currentUser.uid;
@@ -585,6 +607,26 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       };
       await SmartDBService.set(`notifications/${notif.id}`, updated);
     }
+  };
+
+  const addGiveTakeRecord = async (record: Omit<GiveTakeRecord, 'id' | 'createdAt' | 'addedBy'>) => {
+    if (!currentUser) return;
+    const newRecord: Omit<GiveTakeRecord, 'id'> = {
+      ...record,
+      createdAt: Date.now(),
+      addedBy: currentUser.uid,
+    };
+    await SmartDBService.push('giveTake', newRecord);
+  };
+
+  const editGiveTakeRecord = async (id: string, data: Partial<GiveTakeRecord>) => {
+    const existing = giveTakeRecords.find(r => r.id === id);
+    if (!existing) return;
+    await SmartDBService.set(`giveTake/${id}`, { ...existing, ...data });
+  };
+
+  const deleteGiveTakeRecord = async (id: string) => {
+    await SmartDBService.remove(`giveTake/${id}`);
   };
 
   const clearNotifications = async () => {
@@ -607,16 +649,13 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       currentScreenParams,
       activeFlow,
       firebaseMode,
-      
       login,
       register,
       logout,
-      
       navigate,
       goBack,
       setActiveMonth,
       setActiveFlow,
-      
       addExpense,
       editExpense,
       deleteExpense,
@@ -632,11 +671,14 @@ export const StateProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       addNotification,
       clearNotifications,
       markNotificationsRead,
-      
       getCurrencySymbol,
       formatCurrency,
       clearAllDummyData,
-      dataLoading
+      dataLoading,
+      giveTakeRecords,
+      addGiveTakeRecord,
+      editGiveTakeRecord,
+      deleteGiveTakeRecord,
     }}>
       {children}
     </StateContext.Provider>
