@@ -27,6 +27,12 @@ export const SelectMonthScreen: React.FC = () => {
 
   const isOwner = state.currentUser?.role === 'owner';
 
+  // Highlight the item that matches the actual current month/year, computed live
+  // from the real date so it stays in sync as time passes (works across year
+  // boundaries). getMonth() is 0-based, so we build each item's Date with a
+  // 0-based monthIndex and compare both month and year on the same 0-based basis.
+  const today = new Date();
+
   return (
     <motion.div 
       initial={{ opacity: 0, x: 20 }}
@@ -56,7 +62,13 @@ export const SelectMonthScreen: React.FC = () => {
       {/* Choice Listing with instant-routing */}
       <div className="flex-1 my-2 space-y-3 flex flex-col justify-center max-w-[400px] mx-auto w-full">
         {months.map((m) => {
-          const isSelected = state.activeMonth === m.value;
+          // m.value is 'YYYY-MM' where MM is 1-based (e.g. '2026-07' = July).
+          // Convert to a 0-based monthIndex for Date() so getMonth() lines up.
+          const [year, monthNum] = m.value.split('-').map(Number);
+          const monthDate = new Date(year, monthNum - 1);
+          const isSelected =
+            monthDate.getFullYear() === today.getFullYear() &&
+            monthDate.getMonth() === today.getMonth();
           return (
             <button
               key={m.value}
